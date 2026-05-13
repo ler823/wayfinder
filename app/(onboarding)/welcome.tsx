@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useStudentProfile } from '@/context/StudentProfileContext';
+import { ResponsiveContainer } from '@/components/ResponsiveContainer';
 
 const LANGUAGES = [
   { code: 'en', label: 'English' },
@@ -17,55 +18,59 @@ export default function WelcomeScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.appName}>Wayfinder</Text>
-        <Text style={styles.tagline}>
-          Your personal guide to college — deadlines, planning, and support, all in one place.
-        </Text>
+    <SafeAreaView style={styles.safeArea}>
+      <ResponsiveContainer style={styles.container}>
+        <View style={styles.content}>
+          <Text style={styles.appName}>Wayfinder</Text>
+          <Text style={styles.tagline}>
+            Your personal guide to college — deadlines, planning, and support, all in one place.
+          </Text>
 
-        <Text style={styles.langLabel}>Choose your language</Text>
-        <View style={styles.langRow}>
-          {LANGUAGES.map((lang) => (
-            <TouchableOpacity
-              key={lang.code}
-              style={[
-                styles.langButton,
-                profile.language === lang.code && styles.langButtonActive,
-              ]}
-              onPress={() => selectLanguage(lang.code)}
-              accessibilityRole="radio"
-              accessibilityState={{ checked: profile.language === lang.code }}
-            >
-              <Text
+          <Text style={styles.langLabel}>Choose your language</Text>
+          <View style={styles.langRow}>
+            {LANGUAGES.map((lang) => (
+              <TouchableOpacity
+                key={lang.code}
                 style={[
-                  styles.langButtonText,
-                  profile.language === lang.code && styles.langButtonTextActive,
+                  styles.langButton,
+                  profile.language === lang.code && styles.langButtonActive,
                 ]}
+                onPress={() => selectLanguage(lang.code)}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: profile.language === lang.code }}
               >
-                {lang.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
+                <Text
+                  style={[
+                    styles.langButtonText,
+                    profile.language === lang.code && styles.langButtonTextActive,
+                  ]}
+                >
+                  {lang.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
-      </View>
 
-      <TouchableOpacity
-        style={styles.primaryButton}
-        onPress={() => router.push('/(onboarding)/school')}
-        accessibilityRole="button"
-      >
-        <Text style={styles.primaryButtonText}>Get Started</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.primaryButton}
+          onPress={() => router.push('/(onboarding)/school')}
+          accessibilityRole="button"
+        >
+          <Text style={styles.primaryButtonText}>Get Started</Text>
+        </TouchableOpacity>
+      </ResponsiveContainer>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingHorizontal: 24,
+  },
+  container: {
+    flex: 1,
     paddingBottom: 32,
   },
   content: {

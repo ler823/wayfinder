@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useStudentProfile } from '@/context/StudentProfileContext';
 import StepIndicator from '@/components/onboarding/StepIndicator';
+import { ResponsiveContainer } from '@/components/ResponsiveContainer';
 
 const SCHOOLS = [
   'Cal State Long Beach',
@@ -22,48 +23,51 @@ export default function SchoolScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.back}>{'< Back'}</Text>
-        </TouchableOpacity>
-        <StepIndicator current={1} total={4} />
-      </View>
-
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.title}>What school are you attending?</Text>
-        <Text style={styles.subtitle}>This helps us use the right information for your campus.</Text>
-
-        <View style={styles.optionList}>
-          {SCHOOLS.map((school) => (
-            <TouchableOpacity
-              key={school}
-              style={[styles.option, profile.school === school && styles.optionActive]}
-              onPress={() => select(school)}
-              accessibilityRole="radio"
-              accessibilityState={{ checked: profile.school === school }}
-            >
-              <Text style={[styles.optionText, profile.school === school && styles.optionTextActive]}>
-                {school}
-              </Text>
-            </TouchableOpacity>
-          ))}
+    <SafeAreaView style={styles.safeArea}>
+      <ResponsiveContainer style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <Text style={styles.back}>{'< Back'}</Text>
+          </TouchableOpacity>
+          <StepIndicator current={1} total={4} />
         </View>
-      </ScrollView>
 
-      <TouchableOpacity
-        style={[styles.primaryButton, !profile.school && styles.primaryButtonDisabled]}
-        onPress={() => profile.school && router.push('/(onboarding)/profile')}
-        disabled={!profile.school}
-      >
-        <Text style={styles.primaryButtonText}>Continue</Text>
-      </TouchableOpacity>
+        <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
+          <Text style={styles.title}>What school are you attending?</Text>
+          <Text style={styles.subtitle}>This helps us use the right information for your campus.</Text>
+
+          <View style={styles.optionList}>
+            {SCHOOLS.map((school) => (
+              <TouchableOpacity
+                key={school}
+                style={[styles.option, profile.school === school && styles.optionActive]}
+                onPress={() => select(school)}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: profile.school === school }}
+              >
+                <Text style={[styles.optionText, profile.school === school && styles.optionTextActive]}>
+                  {school}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+
+        <TouchableOpacity
+          style={[styles.primaryButton, !profile.school && styles.primaryButtonDisabled]}
+          onPress={() => profile.school && router.push('/(onboarding)/profile')}
+          disabled={!profile.school}
+        >
+          <Text style={styles.primaryButtonText}>Continue</Text>
+        </TouchableOpacity>
+      </ResponsiveContainer>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff', paddingHorizontal: 24, paddingBottom: 32 },
+  safeArea: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, paddingBottom: 32 },
   header: { flexDirection: 'row', alignItems: 'center', paddingVertical: 16, gap: 16 },
   back: { fontSize: 15, color: '#111' },
   scroll: { flex: 1 },

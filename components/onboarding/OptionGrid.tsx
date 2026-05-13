@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 
 type Props = {
   options: string[];
@@ -7,12 +8,15 @@ type Props = {
 };
 
 export default function OptionGrid({ options, selected, onSelect }: Props) {
+  const { isMobile, isTablet } = useBreakpoint();
+  const minWidth = isMobile ? '45%' : isTablet ? '30%' : '22%';
+
   return (
     <View style={styles.grid}>
       {options.map((opt) => (
         <TouchableOpacity
           key={opt}
-          style={[styles.cell, selected === opt && styles.cellActive]}
+          style={[styles.cell, { minWidth }, selected === opt && styles.cellActive]}
           onPress={() => onSelect(opt)}
           accessibilityRole="radio"
           accessibilityState={{ checked: selected === opt }}
@@ -30,7 +34,6 @@ const styles = StyleSheet.create({
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   cell: {
     flex: 1,
-    minWidth: '45%',
     paddingVertical: 16,
     borderWidth: 1,
     borderColor: '#ccc',

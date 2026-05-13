@@ -1,17 +1,22 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ThemedText } from '@/components/themed-text';
+import { ResponsiveContainer } from '@/components/ResponsiveContainer';
 
 export default function AdvisingScreen() {
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Advising</Text>
-      <Text style={styles.body}>Advising prep coming next.</Text>
+      <ResponsiveContainer style={styles.inner}>
+        <ThemedText type="title" style={styles.title}>Advising</ThemedText>
+        <ThemedText style={styles.body}>Advising prep coming next.</ThemedText>
+      </ResponsiveContainer>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff', paddingHorizontal: 20 },
-  title: { fontSize: 22, fontWeight: '700', color: '#111', marginTop: 20, marginBottom: 8 },
+  container: { flex: 1, backgroundColor: '#fff' },
+  inner: { marginTop: 20 },
+  title: { fontSize: 22, fontWeight: '700', color: '#111', marginBottom: 8 },
   body: { fontSize: 15, color: '#666' },
 });

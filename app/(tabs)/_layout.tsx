@@ -1,11 +1,15 @@
 import { Tabs, useRouter } from 'expo-router';
 import { useEffect } from 'react';
+import { View } from 'react-native';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useStudentProfile } from '@/context/StudentProfileContext';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
+import { SidebarNav } from '@/components/navigation/SidebarNav';
 
 export default function TabLayout() {
   const { profile, isLoaded } = useStudentProfile();
   const router = useRouter();
+  const { isMobile } = useBreakpoint();
 
   useEffect(() => {
     if (isLoaded && !profile.onboardingComplete) {
@@ -13,13 +17,15 @@ export default function TabLayout() {
     }
   }, [isLoaded, profile.onboardingComplete]);
 
-  return (
+  const tabs = (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: '#111',
         tabBarInactiveTintColor: '#999',
-        tabBarStyle: { borderTopWidth: 1, borderTopColor: '#e5e5e5' },
+        tabBarStyle: isMobile
+          ? { borderTopWidth: 1, borderTopColor: '#e5e5e5' }
+          : { display: 'none' },
         tabBarLabelStyle: { fontSize: 11, fontWeight: '500' },
       }}
     >
@@ -48,7 +54,9 @@ export default function TabLayout() {
         name="help"
         options={{
           title: 'Help',
-          tabBarIcon: ({ color }) => <IconSymbol name="questionmark.circle.fill" size={22} color={color} />,
+          tabBarIcon: ({ color }) => (
+            <IconSymbol name="questionmark.circle.fill" size={22} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
@@ -60,4 +68,15 @@ export default function TabLayout() {
       />
     </Tabs>
   );
+
+  if (!isMobile) {
+    return (
+      <View style={{ flex: 1, flexDirection: 'row' }}>
+        <SidebarNav />
+        <View style={{ flex: 1 }}>{tabs}</View>
+      </View>
+    );
+  }
+
+  return tabs;
 }

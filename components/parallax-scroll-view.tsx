@@ -10,6 +10,7 @@ import Animated, {
 import { ThemedView } from '@/components/themed-view';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { MAX_CONTENT_WIDTH } from '@/constants/layout';
 
 const HEADER_HEIGHT = 250;
 
@@ -57,7 +58,9 @@ export default function ParallaxScrollView({
         ]}>
         {headerImage}
       </Animated.View>
-      <ThemedView style={styles.content}>{children}</ThemedView>
+      <ThemedView style={styles.content}>
+        <ThemedView style={styles.contentInner}>{children}</ThemedView>
+      </ThemedView>
     </Animated.ScrollView>
   );
 }
@@ -75,5 +78,10 @@ const styles = StyleSheet.create({
     padding: 32,
     gap: 16,
     overflow: 'hidden',
+    alignItems: 'center',
+  },
+  contentInner: {
+    width: '100%',
+    maxWidth: MAX_CONTENT_WIDTH.desktop,
   },
 });

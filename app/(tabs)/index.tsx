@@ -4,6 +4,7 @@ import { useStudentProfile } from '@/context/StudentProfileContext';
 import { useDeadlines } from '@/context/DeadlinesContext';
 import { differenceInDays, parseISO } from 'date-fns';
 import { useRouter } from 'expo-router';
+import { ResponsiveContainer } from '@/components/ResponsiveContainer';
 
 export default function HomeScreen() {
   const { profile } = useStudentProfile();
@@ -23,71 +24,73 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scroll}>
-        <Text style={styles.greeting}>{greeting}</Text>
-        <Text style={styles.subGreeting}>Here's what needs your attention today.</Text>
+        <ResponsiveContainer>
+          <Text style={styles.greeting}>{greeting}</Text>
+          <Text style={styles.subGreeting}>Here's what needs your attention today.</Text>
 
-        {urgentDeadline && (
-          <TouchableOpacity
-            style={styles.urgentCard}
-            onPress={() => router.push('/(tabs)/deadlines')}
-            accessibilityRole="button"
-          >
-            <View style={styles.urgentAccent} />
-            <View style={styles.urgentBody}>
-              <Text style={styles.urgentLabel}>URGENT</Text>
-              <Text style={styles.urgentTitle}>{urgentDeadline.title}</Text>
-              <Text style={styles.urgentMeta}>
-                Due in{' '}
-                {daysUntil === 0 ? 'today' : `${daysUntil} day${daysUntil === 1 ? '' : 's'}`} — tap
-                to view
+          {urgentDeadline && (
+            <TouchableOpacity
+              style={styles.urgentCard}
+              onPress={() => router.push('/(tabs)/deadlines')}
+              accessibilityRole="button"
+            >
+              <View style={styles.urgentAccent} />
+              <View style={styles.urgentBody}>
+                <Text style={styles.urgentLabel}>URGENT</Text>
+                <Text style={styles.urgentTitle}>{urgentDeadline.title}</Text>
+                <Text style={styles.urgentMeta}>
+                  Due in{' '}
+                  {daysUntil === 0 ? 'today' : `${daysUntil} day${daysUntil === 1 ? '' : 's'}`} — tap
+                  to view
+                </Text>
+              </View>
+              <Text style={styles.chevron}>{'>'}</Text>
+            </TouchableOpacity>
+          )}
+
+          <Text style={styles.sectionLabel}>This Week's Tasks (3)</Text>
+
+          {[
+            'Review Spring Registration Dates',
+            'Check Advising Availability',
+            'Confirm Financial Aid Documents',
+          ].map((task) => (
+            <View key={task} style={styles.taskRow}>
+              <View style={styles.checkbox} />
+              <Text style={styles.taskLabel}>{task}</Text>
+              <Text style={styles.chevron}>{'>'}</Text>
+            </View>
+          ))}
+
+          <Text style={styles.sectionLabel}>Degree Progress</Text>
+          <View style={styles.progressCard}>
+            <View style={styles.progressBarTrack}>
+              <View
+                style={[
+                  styles.progressBarFill,
+                  {
+                    width: `${Math.round(
+                      (profile.unitsCompleted / profile.unitsRequired) * 100,
+                    )}%`,
+                  },
+                ]}
+              />
+              <Text style={styles.progressPercent}>
+                {Math.round((profile.unitsCompleted / profile.unitsRequired) * 100)}%
               </Text>
             </View>
-            <Text style={styles.chevron}>{'>'}</Text>
-          </TouchableOpacity>
-        )}
-
-        <Text style={styles.sectionLabel}>This Week's Tasks (3)</Text>
-
-        {[
-          'Review Spring Registration Dates',
-          'Check Advising Availability',
-          'Confirm Financial Aid Documents',
-        ].map((task) => (
-          <View key={task} style={styles.taskRow}>
-            <View style={styles.checkbox} />
-            <Text style={styles.taskLabel}>{task}</Text>
-            <Text style={styles.chevron}>{'>'}</Text>
-          </View>
-        ))}
-
-        <Text style={styles.sectionLabel}>Degree Progress</Text>
-        <View style={styles.progressCard}>
-          <View style={styles.progressBarTrack}>
-            <View
-              style={[
-                styles.progressBarFill,
-                {
-                  width: `${Math.round(
-                    (profile.unitsCompleted / profile.unitsRequired) * 100,
-                  )}%`,
-                },
-              ]}
-            />
-            <Text style={styles.progressPercent}>
-              {Math.round((profile.unitsCompleted / profile.unitsRequired) * 100)}%
+            <Text style={styles.progressMeta}>
+              {profile.unitsCompleted} of {profile.unitsRequired} units completed —{' '}
+              {profile.standing}, {profile.major || 'Undecided'}
             </Text>
           </View>
-          <Text style={styles.progressMeta}>
-            {profile.unitsCompleted} of {profile.unitsRequired} units completed —{' '}
-            {profile.standing}, {profile.major || 'Undecided'}
-          </Text>
-        </View>
 
-        <Text style={styles.sectionLabel}>Recent Alerts</Text>
-        <TouchableOpacity style={styles.alertRow}>
-          <Text style={styles.alertText}>Alert — Academic standing update available</Text>
-          <Text style={styles.chevron}>{'>'}</Text>
-        </TouchableOpacity>
+          <Text style={styles.sectionLabel}>Recent Alerts</Text>
+          <TouchableOpacity style={styles.alertRow}>
+            <Text style={styles.alertText}>Alert — Academic standing update available</Text>
+            <Text style={styles.chevron}>{'>'}</Text>
+          </TouchableOpacity>
+        </ResponsiveContainer>
       </ScrollView>
     </SafeAreaView>
   );
@@ -95,7 +98,7 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
-  scroll: { paddingHorizontal: 20, paddingBottom: 32 },
+  scroll: { paddingBottom: 32 },
   greeting: { fontSize: 20, fontWeight: '700', color: '#111', marginTop: 20 },
   subGreeting: { fontSize: 14, color: '#666', marginBottom: 24, marginTop: 2 },
 
