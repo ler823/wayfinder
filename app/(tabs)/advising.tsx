@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
+import { useRouter } from 'expo-router';
 import { useAdvising } from '@/context/AdvisingContext';
 import { useStudentProfile } from '@/context/StudentProfileContext';
 import { useSemesterPlan } from '@/context/SemesterPlanContext';
@@ -112,6 +113,7 @@ export default function AdvisingScreen() {
   const { state, dispatch } = useAdvising();
   const { profile } = useStudentProfile();
   const { plan } = useSemesterPlan();
+  const router = useRouter();
   const [customInput, setCustomInput] = useState('');
   const [followUpInput, setFollowUpInput] = useState('');
 
@@ -138,7 +140,7 @@ export default function AdvisingScreen() {
         <ScrollView contentContainerStyle={styles.scroll}>
           <ResponsiveContainer>
             <TouchableOpacity
-              onPress={() => dispatch({ type: 'BUILD_PREP_SHEET' })}
+              onPress={() => dispatch({ type: 'CLEAR_PREP_SHEET' })}
               style={styles.backButton}
               accessibilityRole="button"
             >
@@ -219,6 +221,18 @@ export default function AdvisingScreen() {
                 accessibilityRole="button"
               >
                 <Text style={styles.emailButtonText}>Email {advisingOffice.email}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.viewOfficeLink}
+                onPress={() =>
+                  router.push({
+                    pathname: '/office/[officeId]',
+                    params: { officeId: advisingOffice.id, reason: 'advising appointment' },
+                  })
+                }
+                accessibilityRole="button"
+              >
+                <Text style={styles.viewOfficeLinkText}>View full contact info →</Text>
               </TouchableOpacity>
             </View>
           </ResponsiveContainer>
@@ -460,4 +474,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emailButtonText: { color: '#111', fontSize: 15, fontWeight: '600' },
+
+  viewOfficeLink: { paddingTop: 12, alignItems: 'center' },
+  viewOfficeLinkText: { fontSize: 13, color: '#555', fontWeight: '500' },
 });

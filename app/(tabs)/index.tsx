@@ -86,7 +86,11 @@ export default function HomeScreen() {
           </View>
 
           <Text style={styles.sectionLabel}>Recent Alerts</Text>
-          <TouchableOpacity style={styles.alertRow}>
+          <TouchableOpacity
+            style={styles.alertRow}
+            onPress={() => router.push('/recovery/probation')}
+            accessibilityRole="button"
+          >
             <Text style={styles.alertText}>Alert — Academic standing update available</Text>
             <Text style={styles.chevron}>{'>'}</Text>
           </TouchableOpacity>
@@ -108,6 +112,7 @@ const styles = StyleSheet.create({
     borderColor: '#111',
     marginBottom: 24,
     alignItems: 'center',
+    paddingRight: 14,
   },
   urgentAccent: { width: 5, backgroundColor: '#111', alignSelf: 'stretch' },
   urgentBody: { flex: 1, padding: 14 },

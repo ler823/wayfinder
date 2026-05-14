@@ -143,6 +143,18 @@ export default function DeadlineDetailScreen() {
                 >
                   <Text style={styles.emailButtonText}>Email {office.email}</Text>
                 </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.viewOfficeLink}
+                  onPress={() =>
+                    router.push({
+                      pathname: '/office/[officeId]',
+                      params: { officeId: office.id, reason: deadline.title },
+                    })
+                  }
+                  accessibilityRole="button"
+                >
+                  <Text style={styles.viewOfficeLinkText}>View full contact info →</Text>
+                </TouchableOpacity>
               </View>
             </>
           )}
@@ -246,4 +258,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   saveButtonText: { fontSize: 15, color: '#666' },
+
+  viewOfficeLink: { paddingTop: 12, alignItems: 'center' },
+  viewOfficeLinkText: { fontSize: 13, color: '#555', fontWeight: '500' },
 });

@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { format, parseISO } from 'date-fns';
 import { useSemesterPlan } from '@/context/SemesterPlanContext';
 import { useStudentProfile } from '@/context/StudentProfileContext';
+import { useAcademicRecovery } from '@/context/AcademicRecoveryContext';
 import { ResponsiveContainer } from '@/components/ResponsiveContainer';
 import { SEED_COURSES, COMPLETED_COURSE_IDS } from '@/data/degreeRequirements';
 import type { Course, PlannedCourse } from '@/types/course';
@@ -99,7 +100,10 @@ function PlannedCourseRow({
 export default function PlanScreen() {
   const { plan, dispatch } = useSemesterPlan();
   const { profile } = useStudentProfile();
+  const { state: recoveryState } = useAcademicRecovery();
   const router = useRouter();
+
+  const transferCreditFlagged = recoveryState.savedIssueIds.includes('transfer-credit-gap');
 
   const plannedIds = new Set(plan.courses.map((c) => c.id));
   const availableCourses = SEED_COURSES.filter(
@@ -132,6 +136,23 @@ export default function PlanScreen() {
           <Text style={styles.subheading}>
             Map out your next semester and track your degree progress.
           </Text>
+
+          {transferCreditFlagged && (
+            <TouchableOpacity
+              style={styles.transferBanner}
+              onPress={() => router.push('/recovery/transfer-credit-gap')}
+              accessibilityRole="button"
+            >
+              <View style={styles.transferBannerAccent} />
+              <View style={styles.transferBannerBody}>
+                <Text style={styles.transferBannerLabel}>TRANSFER CREDITS UNDER REVIEW</Text>
+                <Text style={styles.transferBannerText}>
+                  Some credits may not be applied yet — your unit count could change.
+                </Text>
+              </View>
+              <Text style={styles.transferBannerChevron}>{'>'}</Text>
+            </TouchableOpacity>
+          )}
 
           <ProgressBar
             completed={profile.unitsCompleted}
@@ -276,4 +297,24 @@ const styles = StyleSheet.create({
   savedAt: { fontSize: 12, color: '#999', textAlign: 'center', marginTop: 8 },
 
   emptyText: { fontSize: 14, color: '#888', marginBottom: 16 },
+
+  transferBanner: {
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderColor: '#111',
+    marginBottom: 20,
+    alignItems: 'center',
+  },
+  transferBannerAccent: { width: 5, backgroundColor: '#111', alignSelf: 'stretch' },
+  transferBannerBody: { flex: 1, padding: 14 },
+  transferBannerLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#111',
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
+    marginBottom: 3,
+  },
+  transferBannerText: { fontSize: 13, color: '#333', lineHeight: 19 },
+  transferBannerChevron: { fontSize: 14, color: '#999', paddingHorizontal: 14 },
 });

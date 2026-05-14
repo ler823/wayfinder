@@ -6,6 +6,7 @@ export type AdvisingAction =
   | { type: 'ADD_CUSTOM_TOPIC'; label: string }
   | { type: 'REMOVE_TOPIC'; topicId: string }
   | { type: 'BUILD_PREP_SHEET' }
+  | { type: 'CLEAR_PREP_SHEET' }
   | { type: 'TOGGLE_PREP_ITEM'; itemId: string }
   | { type: 'UPDATE_PREP_NOTES'; itemId: string; notes: string }
   | { type: 'ADD_FOLLOW_UP'; label: string }
@@ -73,6 +74,9 @@ export function advisingReducer(state: AdvisingState, action: AdvisingAction): A
         .map((t) => ({ id: t.id, label: t.label, notes: '', discussed: false }));
       return { ...state, prepSheet: sheet };
     }
+
+    case 'CLEAR_PREP_SHEET':
+      return { ...state, prepSheet: null };
 
     case 'TOGGLE_PREP_ITEM':
       return {
