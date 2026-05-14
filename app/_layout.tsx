@@ -20,6 +20,7 @@ export default function RootLayout() {
             <Stack>
               <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="deadline/[id]" options={{ headerShown: false }} />
             </Stack>
             <StatusBar style="dark" />
           </AdvisingProvider>
