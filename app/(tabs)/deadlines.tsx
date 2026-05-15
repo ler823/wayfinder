@@ -29,11 +29,16 @@ function DeadlineCard({ deadline, onPress }: { deadline: Deadline; onPress: () =
   const completedSteps = deadline.steps.filter((s) => s.status === 'done').length;
   const allDone = completedSteps === deadline.steps.length && deadline.steps.length > 0;
 
+  const stepSummary = allDone
+    ? 'All steps completed.'
+    : `${completedSteps} of ${deadline.steps.length} steps completed.`;
+
   return (
     <TouchableOpacity
       style={[styles.card, isUrgent && styles.cardUrgent]}
       onPress={onPress}
       accessibilityRole="button"
+      accessibilityLabel={`${isUrgent ? 'Urgent. ' : ''}${deadline.title}. ${daysLabel(deadline.dueDate)}. ${CATEGORY_LABELS[deadline.category]}. ${deadline.steps.length > 0 ? stepSummary : ''}`}
     >
       <View style={[styles.cardAccent, isUrgent && styles.cardAccentUrgent]} />
       <View style={styles.cardBody}>

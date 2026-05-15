@@ -30,12 +30,15 @@ function StepRow({ step, onToggle }: { step: ChecklistStep; onToggle: () => void
   const isDone = step.status === 'done';
   const isInProgress = step.status === 'in-progress';
 
+  const statusLabel = isDone ? 'Completed' : isInProgress ? 'In progress' : 'Not started';
+
   return (
     <TouchableOpacity
       style={styles.stepRow}
       onPress={onToggle}
       accessibilityRole="checkbox"
       accessibilityState={{ checked: isDone }}
+      accessibilityLabel={`${step.label}. ${statusLabel}. Tap to toggle.`}
     >
       <View
         style={[
@@ -96,7 +99,7 @@ export default function DeadlineDetailScreen() {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scroll}>
         <ResponsiveContainer>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton} accessibilityRole="button">
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton} accessibilityRole="button" accessibilityLabel="Go back to deadlines list">
             <Text style={styles.backLabel}>{'‹ Back'}</Text>
           </TouchableOpacity>
 

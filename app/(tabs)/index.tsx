@@ -35,6 +35,7 @@ export default function HomeScreen() {
               style={styles.urgentCard}
               onPress={() => router.push('/(tabs)/deadlines')}
               accessibilityRole="button"
+              accessibilityLabel={`Urgent deadline: ${urgentDeadline.title}. Due in ${daysUntil === 0 ? 'today' : `${daysUntil} day${daysUntil === 1 ? '' : 's'}`}. Tap to view all deadlines.`}
             >
               <View style={styles.urgentAccent} />
               <View style={styles.urgentBody}>
@@ -52,16 +53,21 @@ export default function HomeScreen() {
 
           <SectionLabel style={styles.sectionGap}>This Week's Tasks (3)</SectionLabel>
 
-          {[
-            'Review Spring Registration Dates',
-            'Check Advising Availability',
-            'Confirm Financial Aid Documents',
-          ].map((task) => (
-            <View key={task} style={styles.taskRow}>
-              <View style={styles.checkbox} />
-              <Text style={styles.taskLabel}>{task}</Text>
+          {([
+            { label: 'Review Spring Registration Dates', route: '/(tabs)/deadlines' },
+            { label: 'Check Advising Availability', route: '/(tabs)/advising' },
+            { label: 'Confirm Financial Aid Documents', route: '/(tabs)/deadlines' },
+          ] as { label: string; route: string }[]).map(({ label, route }) => (
+            <TouchableOpacity
+              key={label}
+              style={styles.taskRow}
+              onPress={() => router.push(route as any)}
+              accessibilityRole="button"
+              accessibilityLabel={`Task: ${label}. Tap to view.`}
+            >
+              <Text style={styles.taskLabel}>{label}</Text>
               <Text style={styles.chevron}>{'›'}</Text>
-            </View>
+            </TouchableOpacity>
           ))}
 
           <SectionLabel style={styles.sectionGap}>Degree Progress</SectionLabel>
@@ -92,6 +98,7 @@ export default function HomeScreen() {
             style={styles.alertRow}
             onPress={() => router.push('/recovery/probation')}
             accessibilityRole="button"
+            accessibilityLabel="Alert: Academic standing update available. Tap to view recovery steps."
           >
             <Text style={styles.alertText}>Alert — Academic standing update available</Text>
             <Text style={styles.chevron}>{'›'}</Text>
@@ -143,14 +150,7 @@ const styles = StyleSheet.create({
     gap: 12,
     backgroundColor: colors.surface,
   },
-  checkbox: {
-    width: 18,
-    height: 18,
-    borderWidth: 1.5,
-    borderColor: colors.text.tertiary,
-    borderRadius: radius.sm,
-  },
-  taskLabel: { flex: 1, fontSize: typeScale.sm + 1, color: colors.text.primary },
+taskLabel: { flex: 1, fontSize: typeScale.sm + 1, color: colors.text.primary },
 
   progressCard: {
     borderWidth: 1,
