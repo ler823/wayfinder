@@ -1,6 +1,7 @@
 import { Tabs, useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { View } from 'react-native';
+import { colors } from '@/constants/colors';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useStudentProfile } from '@/context/StudentProfileContext';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
@@ -21,10 +22,10 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#111',
-        tabBarInactiveTintColor: '#999',
+        tabBarActiveTintColor: colors.navy,
+        tabBarInactiveTintColor: colors.text.tertiary,
         tabBarStyle: isMobile
-          ? { borderTopWidth: 1, borderTopColor: '#e5e5e5' }
+          ? { borderTopWidth: 1, borderTopColor: colors.border, backgroundColor: colors.surface }
           : { display: 'none' },
         tabBarLabelStyle: { fontSize: 11, fontWeight: '500' },
       }}

@@ -3,6 +3,8 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useStudentProfile } from '@/context/StudentProfileContext';
 import { ResponsiveContainer } from '@/components/ResponsiveContainer';
+import { Button } from '@/components/ui/Button';
+import { colors, radius, typeScale } from '@/constants/colors';
 
 const LANGUAGES = [
   { code: 'en', label: 'English' },
@@ -52,79 +54,51 @@ export default function WelcomeScreen() {
           </View>
         </View>
 
-        <TouchableOpacity
-          style={styles.primaryButton}
+        <Button
+          label="Get Started"
           onPress={() => router.push('/(onboarding)/school')}
-          accessibilityRole="button"
-        >
-          <Text style={styles.primaryButtonText}>Get Started</Text>
-        </TouchableOpacity>
+        />
       </ResponsiveContainer>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  container: {
-    flex: 1,
-    paddingBottom: 32,
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-  },
+  safeArea: { flex: 1, backgroundColor: colors.background },
+  container: { flex: 1, paddingBottom: 32 },
+  content: { flex: 1, justifyContent: 'center' },
   appName: {
-    fontSize: 36,
+    fontSize: typeScale['2xl'],
     fontWeight: '700',
-    color: '#111',
+    color: colors.navy,
     marginBottom: 16,
+    letterSpacing: -0.5,
   },
   tagline: {
-    fontSize: 17,
-    color: '#444',
+    fontSize: typeScale.md,
+    color: colors.text.secondary,
     lineHeight: 26,
     marginBottom: 48,
   },
   langLabel: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: typeScale.sm + 1,
+    color: colors.text.secondary,
     marginBottom: 12,
   },
-  langRow: {
-    flexDirection: 'row',
-    gap: 12,
-  },
+  langRow: { flexDirection: 'row', gap: 12 },
   langButton: {
     flex: 1,
     paddingVertical: 14,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: colors.border,
+    borderRadius: radius.md,
     alignItems: 'center',
+    backgroundColor: colors.surface,
   },
   langButtonActive: {
-    borderColor: '#111',
-    backgroundColor: '#111',
+    borderColor: colors.navy,
+    backgroundColor: colors.navy,
   },
-  langButtonText: {
-    fontSize: 15,
-    color: '#444',
-  },
-  langButtonTextActive: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-  primaryButton: {
-    backgroundColor: '#111',
-    paddingVertical: 16,
-    alignItems: 'center',
-  },
-  primaryButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
+  langButtonText: { fontSize: typeScale.base, color: colors.text.secondary },
+  langButtonTextActive: { color: colors.text.inverse, fontWeight: '600' },
 });

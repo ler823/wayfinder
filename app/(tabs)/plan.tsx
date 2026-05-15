@@ -6,7 +6,10 @@ import { useSemesterPlan } from '@/context/SemesterPlanContext';
 import { useStudentProfile } from '@/context/StudentProfileContext';
 import { useAcademicRecovery } from '@/context/AcademicRecoveryContext';
 import { ResponsiveContainer } from '@/components/ResponsiveContainer';
+import { Button } from '@/components/ui/Button';
+import { SectionLabel } from '@/components/ui/SectionLabel';
 import { SEED_COURSES, COMPLETED_COURSE_IDS } from '@/data/degreeRequirements';
+import { colors, radius, typeScale } from '@/constants/colors';
 import type { Course, PlannedCourse } from '@/types/course';
 
 const COURSE_NAME: Record<string, string> = Object.fromEntries(
@@ -85,7 +88,7 @@ function PlannedCourseRow({
       </View>
       {course.hasPrerequisiteWarning && (
         <View style={styles.warningCard}>
-          <Text style={styles.warningHeading}>Check prerequisites first</Text>
+          <Text style={styles.warningHeading}>CHECK PREREQUISITES FIRST</Text>
           <Text style={styles.warningText}>
             You may not have completed all prerequisites for{' '}
             <Text style={{ fontWeight: '600' }}>{course.name}</Text>. Enrolling without them can
@@ -150,7 +153,7 @@ export default function PlanScreen() {
                   Some credits may not be applied yet — your unit count could change.
                 </Text>
               </View>
-              <Text style={styles.transferBannerChevron}>{'>'}</Text>
+              <Text style={styles.transferBannerChevron}>{'›'}</Text>
             </TouchableOpacity>
           )}
 
@@ -159,7 +162,7 @@ export default function PlanScreen() {
             required={profile.unitsRequired}
           />
 
-          <Text style={styles.sectionLabel}>Plan Next Semester</Text>
+          <SectionLabel>Plan Next Semester</SectionLabel>
           {availableCourses.length === 0 ? (
             <Text style={styles.emptyText}>You've added all available courses.</Text>
           ) : (
@@ -181,7 +184,7 @@ export default function PlanScreen() {
           {plan.courses.length > 0 && (
             <>
               <View style={styles.sectionHeader}>
-                <Text style={styles.sectionLabel}>Your Tentative Plan</Text>
+                <SectionLabel style={{ marginBottom: 0 }}>Your Tentative Plan</SectionLabel>
                 <Text style={styles.unitTotal}>{totalPlannedUnits} units</Text>
               </View>
               {plan.courses.map((course) => (
@@ -191,13 +194,11 @@ export default function PlanScreen() {
                   onRemove={() => dispatch({ type: 'REMOVE_COURSE', courseId: course.id })}
                 />
               ))}
-              <TouchableOpacity
-                style={styles.saveButton}
+              <Button
+                label="Save Tentative Plan"
                 onPress={savePlan}
-                accessibilityRole="button"
-              >
-                <Text style={styles.saveButtonText}>Save Tentative Plan</Text>
-              </TouchableOpacity>
+                style={styles.saveButtonGap}
+              />
               {plan.savedAt && (
                 <Text style={styles.savedAt}>
                   Last saved {format(parseISO(plan.savedAt), 'MMMM d, yyyy')}
@@ -212,19 +213,18 @@ export default function PlanScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: colors.background },
   scroll: { paddingBottom: 40 },
-  heading: { fontSize: 22, fontWeight: '700', color: '#111', marginTop: 20, marginBottom: 4 },
-  subheading: { fontSize: 14, color: '#666', marginBottom: 24 },
+  heading: { fontSize: typeScale.xl, fontWeight: '700', color: colors.text.primary, marginTop: 20, marginBottom: 4 },
+  subheading: { fontSize: typeScale.sm + 1, color: colors.text.secondary, marginBottom: 24 },
 
   progressSection: { marginBottom: 28 },
   progressLabelRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
-  progressLabel: { fontSize: 13, fontWeight: '600', color: '#666' },
-  progressCount: { fontSize: 13, color: '#666' },
-  progressTrack: { height: 8, backgroundColor: '#e5e5e5' },
-  progressFill: { height: 8, backgroundColor: '#111' },
+  progressLabel: { fontSize: typeScale.sm, fontWeight: '600', color: colors.text.secondary },
+  progressCount: { fontSize: typeScale.sm, color: colors.text.secondary },
+  progressTrack: { height: 8, backgroundColor: '#E8E4E0', borderRadius: radius.sm, overflow: 'hidden' },
+  progressFill: { height: 8, backgroundColor: colors.navy },
 
-  sectionLabel: { fontSize: 13, fontWeight: '600', color: '#666', marginBottom: 10 },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -232,89 +232,94 @@ const styles = StyleSheet.create({
     marginTop: 24,
     marginBottom: 10,
   },
-  unitTotal: { fontSize: 13, fontWeight: '700', color: '#111' },
+  unitTotal: { fontSize: typeScale.sm, fontWeight: '700', color: colors.text.primary },
 
   courseRow: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#e5e5e5',
+    borderColor: colors.border,
+    borderRadius: radius.lg,
     padding: 14,
     marginBottom: 8,
     gap: 12,
+    backgroundColor: colors.surface,
   },
-  courseRowWarning: { borderColor: '#bbb' },
+  courseRowWarning: { borderColor: colors.urgent },
   courseInfo: { flex: 1 },
-  courseName: { fontSize: 14, fontWeight: '600', color: '#111', marginBottom: 2 },
-  courseMeta: { fontSize: 12, color: '#888' },
-  prereqNote: { fontSize: 12, color: '#555', marginTop: 4 },
+  courseName: { fontSize: typeScale.sm + 1, fontWeight: '600', color: colors.text.primary, marginBottom: 2 },
+  courseMeta: { fontSize: typeScale.xs + 1, color: colors.text.tertiary },
+  prereqNote: { fontSize: typeScale.xs + 1, color: colors.urgent, marginTop: 4 },
 
   addButton: {
-    borderWidth: 1,
-    borderColor: '#111',
+    borderWidth: 1.5,
+    borderColor: colors.navy,
+    borderRadius: radius.md,
     paddingHorizontal: 16,
     paddingVertical: 8,
     flexShrink: 0,
   },
-  addButtonText: { fontSize: 13, fontWeight: '600', color: '#111' },
+  addButtonText: { fontSize: typeScale.sm, fontWeight: '600', color: colors.navy },
 
   plannedRow: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#e5e5e5',
+    borderColor: colors.border,
+    borderRadius: radius.lg,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
     padding: 14,
     marginBottom: 0,
     gap: 12,
+    backgroundColor: colors.surface,
   },
   removeButton: { paddingHorizontal: 12, paddingVertical: 8, flexShrink: 0 },
-  removeButtonText: { fontSize: 22, color: '#999', lineHeight: 24 },
+  removeButtonText: { fontSize: 22, color: colors.text.tertiary, lineHeight: 24 },
 
   warningCard: {
     borderWidth: 1,
-    borderColor: '#111',
+    borderColor: colors.urgent,
     borderTopWidth: 0,
+    borderBottomLeftRadius: radius.lg,
+    borderBottomRightRadius: radius.lg,
     padding: 14,
     marginBottom: 8,
+    backgroundColor: '#FDF1EE',
   },
   warningHeading: {
-    fontSize: 11,
+    fontSize: typeScale.xs,
     fontWeight: '700',
-    color: '#111',
+    color: colors.urgent,
     letterSpacing: 0.5,
-    textTransform: 'uppercase',
     marginBottom: 4,
   },
-  warningText: { fontSize: 13, color: '#333', lineHeight: 19 },
+  warningText: { fontSize: typeScale.sm, color: colors.text.primary, lineHeight: 19 },
 
-  saveButton: {
-    backgroundColor: '#111',
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: 16,
-  },
-  saveButtonText: { color: '#fff', fontSize: 15, fontWeight: '600' },
-  savedAt: { fontSize: 12, color: '#999', textAlign: 'center', marginTop: 8 },
+  saveButtonGap: { marginTop: 16 },
+  savedAt: { fontSize: typeScale.xs + 1, color: colors.text.tertiary, textAlign: 'center', marginTop: 8 },
 
-  emptyText: { fontSize: 14, color: '#888', marginBottom: 16 },
+  emptyText: { fontSize: typeScale.sm + 1, color: colors.text.tertiary, marginBottom: 16 },
 
   transferBanner: {
     flexDirection: 'row',
-    borderWidth: 1,
-    borderColor: '#111',
+    borderWidth: 1.5,
+    borderColor: colors.urgent,
+    borderRadius: radius.lg,
     marginBottom: 20,
     alignItems: 'center',
+    overflow: 'hidden',
+    backgroundColor: colors.surface,
   },
-  transferBannerAccent: { width: 5, backgroundColor: '#111', alignSelf: 'stretch' },
+  transferBannerAccent: { width: 5, backgroundColor: colors.urgent, alignSelf: 'stretch' },
   transferBannerBody: { flex: 1, padding: 14 },
   transferBannerLabel: {
-    fontSize: 10,
+    fontSize: typeScale.xs,
     fontWeight: '700',
-    color: '#111',
+    color: colors.urgent,
     letterSpacing: 0.5,
-    textTransform: 'uppercase',
     marginBottom: 3,
   },
-  transferBannerText: { fontSize: 13, color: '#333', lineHeight: 19 },
-  transferBannerChevron: { fontSize: 14, color: '#999', paddingHorizontal: 14 },
+  transferBannerText: { fontSize: typeScale.sm, color: colors.text.primary, lineHeight: 19 },
+  transferBannerChevron: { fontSize: 18, color: colors.text.tertiary, paddingHorizontal: 14 },
 });

@@ -5,12 +5,16 @@ import { ACADEMIC_ISSUES } from '@/data/academicIssues';
 import { OFFICE_CONTACTS } from '@/data/officeContacts';
 import { useAcademicRecovery } from '@/context/AcademicRecoveryContext';
 import { ResponsiveContainer } from '@/components/ResponsiveContainer';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { SectionLabel } from '@/components/ui/SectionLabel';
+import { colors, radius, typeScale } from '@/constants/colors';
 
 const ISSUE_TYPE_LABELS: Record<string, string> = {
-  probation: 'Academic Standing',
+  probation:            'Academic Standing',
   'transfer-credit-gap': 'Transfer Credits',
-  'course-failure': 'Course Grade',
-  'sap-warning': 'Financial Aid',
+  'course-failure':     'Course Grade',
+  'sap-warning':        'Financial Aid',
 };
 
 export default function AcademicRecoveryScreen() {
@@ -25,7 +29,7 @@ export default function AcademicRecoveryScreen() {
       <SafeAreaView style={styles.container}>
         <ResponsiveContainer>
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton} accessibilityRole="button">
-            <Text style={styles.backLabel}>{'< Back'}</Text>
+            <Text style={styles.backLabel}>{'‹ Back'}</Text>
           </TouchableOpacity>
           <Text style={styles.notFound}>Issue not found.</Text>
         </ResponsiveContainer>
@@ -51,67 +55,62 @@ export default function AcademicRecoveryScreen() {
       <ScrollView contentContainerStyle={styles.scroll}>
         <ResponsiveContainer>
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton} accessibilityRole="button">
-            <Text style={styles.backLabel}>{'< Back'}</Text>
+            <Text style={styles.backLabel}>{'‹ Back'}</Text>
           </TouchableOpacity>
 
           <Text style={styles.issueBadge}>{ISSUE_TYPE_LABELS[issue.issueType] ?? issue.issueType}</Text>
           <Text style={styles.title}>{issue.title}</Text>
 
-          <View style={styles.explanationCard}>
-            <Text style={styles.explanationText}>{issue.explanation}</Text>
-          </View>
-
-          <Text style={styles.sectionLabel}>What to do next</Text>
-          {issue.steps.map((step) => (
-            <View key={step.number} style={styles.stepRow}>
-              <View style={styles.stepNumberBadge}>
-                <Text style={styles.stepNumberText}>{step.number}</Text>
-              </View>
-              <Text style={styles.stepLabel}>{step.label}</Text>
+          <Card variant="urgent" style={styles.explanationGap}>
+            <View style={styles.explanationInner}>
+              <Text style={styles.explanationText}>{issue.explanation}</Text>
             </View>
-          ))}
+          </Card>
 
-          <Text style={[styles.sectionLabel, { marginTop: 24 }]}>Suggested script</Text>
-          <Text style={styles.sectionSubtext}>Use this as a starting point when calling or visiting the office.</Text>
-          <View style={styles.scriptBox}>
-            <Text style={styles.scriptText}>{issue.contactScript}</Text>
+          <SectionLabel>What to do next</SectionLabel>
+          <View style={styles.stepList}>
+            {issue.steps.map((step) => (
+              <View key={step.number} style={styles.stepRow}>
+                <View style={styles.stepNumberBadge}>
+                  <Text style={styles.stepNumberText}>{step.number}</Text>
+                </View>
+                <Text style={styles.stepLabel}>{step.label}</Text>
+              </View>
+            ))}
           </View>
+
+          <SectionLabel style={styles.scriptLabel}>Suggested script</SectionLabel>
+          <Text style={styles.sectionSubtext}>
+            Use this as a starting point when calling or visiting the office.
+          </Text>
+          <Card variant="info" style={styles.scriptGap}>
+            <View style={styles.scriptInner}>
+              <Text style={styles.scriptText}>{issue.contactScript}</Text>
+            </View>
+          </Card>
 
           {office && (
-            <TouchableOpacity
-              style={styles.contactButton}
+            <Button
+              label={`Contact ${office.name}`}
               onPress={() =>
                 router.push({
                   pathname: '/office/[officeId]',
                   params: { officeId: issue.officeId, reason: issue.title },
                 })
               }
-              accessibilityRole="button"
-            >
-              <Text style={styles.contactButtonText}>Contact {office.name}</Text>
-            </TouchableOpacity>
+              style={styles.contactGap}
+            />
           )}
 
-          <TouchableOpacity
-            style={[
-              styles.saveButton,
-              isSaved && !isResolved && styles.resolveButton,
-              isResolved && styles.resolvedButton,
-            ]}
+          <Button
+            label={
+              isResolved ? 'Marked as resolved' : isSaved ? 'Mark as Resolved' : 'Save This Plan'
+            }
             onPress={handleSaveOrResolve}
+            variant={isSaved && !isResolved ? 'primary' : 'secondary'}
             disabled={isResolved}
-            accessibilityRole="button"
-          >
-            <Text
-              style={[
-                styles.saveButtonText,
-                isSaved && !isResolved && styles.resolveButtonText,
-                isResolved && styles.resolvedButtonText,
-              ]}
-            >
-              {isResolved ? 'Marked as resolved' : isSaved ? 'Mark as Resolved' : 'Save This Plan'}
-            </Text>
-          </TouchableOpacity>
+            style={styles.saveGap}
+          />
 
           {isSaved && !isResolved && (
             <Text style={styles.savedNote}>
@@ -125,86 +124,58 @@ export default function AcademicRecoveryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: colors.background },
   scroll: { paddingBottom: 40 },
-  notFound: { fontSize: 15, color: '#666', marginTop: 20 },
+  notFound: { fontSize: typeScale.base, color: colors.text.secondary, marginTop: 20 },
 
   backButton: { marginTop: 12, marginBottom: 20, alignSelf: 'flex-start' },
-  backLabel: { fontSize: 15, color: '#111', fontWeight: '500' },
+  backLabel: { fontSize: typeScale.base, color: colors.navy, fontWeight: '500' },
 
   issueBadge: {
-    fontSize: 11,
+    fontSize: typeScale.xs,
     fontWeight: '700',
-    color: '#555',
+    color: colors.urgent,
     letterSpacing: 0.5,
     textTransform: 'uppercase',
     marginBottom: 6,
   },
-  title: { fontSize: 22, fontWeight: '700', color: '#111', marginBottom: 16 },
+  title: { fontSize: typeScale.xl, fontWeight: '700', color: colors.text.primary, marginBottom: 16 },
 
-  explanationCard: {
-    borderWidth: 1,
-    borderColor: '#111',
-    padding: 16,
-    marginBottom: 24,
-  },
-  explanationText: { fontSize: 15, color: '#222', lineHeight: 23 },
+  explanationGap: { marginBottom: 24 },
+  explanationInner: { padding: 16 },
+  explanationText: { fontSize: typeScale.base, color: colors.text.primary, lineHeight: 23 },
 
-  sectionLabel: { fontSize: 13, fontWeight: '600', color: '#666', marginBottom: 6 },
-  sectionSubtext: { fontSize: 13, color: '#888', marginBottom: 12 },
-
+  stepList: { gap: 8, marginBottom: 24 },
   stepRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     borderWidth: 1,
-    borderColor: '#e5e5e5',
+    borderColor: colors.border,
+    borderRadius: radius.lg,
     padding: 14,
-    marginBottom: 8,
     gap: 14,
+    backgroundColor: colors.surface,
   },
   stepNumberBadge: {
     width: 22,
     height: 22,
-    backgroundColor: '#111',
+    backgroundColor: colors.navy,
+    borderRadius: radius.sm,
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
     marginTop: 1,
   },
-  stepNumberText: { fontSize: 12, fontWeight: '700', color: '#fff' },
-  stepLabel: { flex: 1, fontSize: 14, color: '#222', lineHeight: 21 },
+  stepNumberText: { fontSize: typeScale.xs + 1, fontWeight: '700', color: colors.text.inverse },
+  stepLabel: { flex: 1, fontSize: typeScale.sm + 1, color: colors.text.primary, lineHeight: 21 },
 
-  scriptBox: {
-    borderWidth: 1,
-    borderColor: '#e5e5e5',
-    backgroundColor: '#fafafa',
-    padding: 16,
-    marginBottom: 24,
-  },
-  scriptText: { fontSize: 14, color: '#333', lineHeight: 22, fontStyle: 'italic' },
+  scriptLabel: { marginTop: 24 },
+  sectionSubtext: { fontSize: typeScale.sm, color: colors.text.tertiary, marginBottom: 12 },
+  scriptGap: { marginBottom: 24 },
+  scriptInner: { padding: 16 },
+  scriptText: { fontSize: typeScale.sm + 1, color: colors.text.primary, lineHeight: 22, fontStyle: 'italic' },
 
-  contactButton: {
-    backgroundColor: '#111',
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  contactButtonText: { color: '#fff', fontSize: 15, fontWeight: '600' },
-
-  saveButton: {
-    borderWidth: 1,
-    borderColor: '#111',
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  saveButtonText: { fontSize: 15, fontWeight: '600', color: '#111' },
-
-  resolveButton: { backgroundColor: '#111' },
-  resolveButtonText: { color: '#fff' },
-
-  resolvedButton: { borderColor: '#ccc', backgroundColor: '#fff' },
-  resolvedButtonText: { color: '#999', fontWeight: '400' },
-
-  savedNote: { fontSize: 12, color: '#888', textAlign: 'center' },
+  contactGap: { marginBottom: 12 },
+  saveGap: { marginBottom: 8 },
+  savedNote: { fontSize: typeScale.xs + 1, color: colors.text.tertiary, textAlign: 'center' },
 });

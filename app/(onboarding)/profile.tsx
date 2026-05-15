@@ -5,6 +5,8 @@ import { useStudentProfile } from '@/context/StudentProfileContext';
 import StepIndicator from '@/components/onboarding/StepIndicator';
 import OptionGrid from '@/components/onboarding/OptionGrid';
 import { ResponsiveContainer } from '@/components/ResponsiveContainer';
+import { Button } from '@/components/ui/Button';
+import { colors, radius, typeScale } from '@/constants/colors';
 import type { AcademicStanding } from '@/types/student';
 
 const STANDINGS: AcademicStanding[] = ['Freshman', 'Sophomore', 'Junior', 'Senior'];
@@ -31,7 +33,7 @@ export default function ProfileScreen() {
       <ResponsiveContainer style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()}>
-            <Text style={styles.back}>{'< Back'}</Text>
+            <Text style={styles.back}>{'‹ Back'}</Text>
           </TouchableOpacity>
           <StepIndicator current={2} total={4} />
         </View>
@@ -83,34 +85,36 @@ export default function ProfileScreen() {
           />
         </ScrollView>
 
-        <TouchableOpacity
-          style={[styles.primaryButton, !canContinue && styles.primaryButtonDisabled]}
+        <Button
+          label="Continue"
           onPress={() => canContinue && router.push('/(onboarding)/complete')}
           disabled={!canContinue}
-        >
-          <Text style={styles.primaryButtonText}>Continue</Text>
-        </TouchableOpacity>
+        />
       </ResponsiveContainer>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#fff' },
+  safeArea: { flex: 1, backgroundColor: colors.background },
   container: { flex: 1, paddingBottom: 32 },
   header: { flexDirection: 'row', alignItems: 'center', paddingVertical: 16, gap: 16 },
-  back: { fontSize: 15, color: '#111' },
+  back: { fontSize: typeScale.base, color: colors.navy, fontWeight: '500' },
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 24 },
-  title: { fontSize: 22, fontWeight: '700', color: '#111', marginBottom: 8, marginTop: 8 },
-  subtitle: { fontSize: 15, color: '#666', lineHeight: 22, marginBottom: 24 },
-  questionLabel: { fontSize: 15, fontWeight: '600', color: '#111', marginBottom: 12, marginTop: 20 },
+  title: { fontSize: typeScale.xl, fontWeight: '700', color: colors.text.primary, marginBottom: 8, marginTop: 8 },
+  subtitle: { fontSize: typeScale.base, color: colors.text.secondary, lineHeight: 22, marginBottom: 24 },
+  questionLabel: { fontSize: typeScale.base, fontWeight: '600', color: colors.text.primary, marginBottom: 12, marginTop: 20 },
   optionList: { gap: 10 },
-  option: { paddingVertical: 14, paddingHorizontal: 16, borderWidth: 1, borderColor: '#ccc' },
-  optionActive: { borderColor: '#111', backgroundColor: '#111' },
-  optionText: { fontSize: 15, color: '#333' },
-  optionTextActive: { color: '#fff', fontWeight: '600' },
-  primaryButton: { backgroundColor: '#111', paddingVertical: 16, alignItems: 'center' },
-  primaryButtonDisabled: { backgroundColor: '#999' },
-  primaryButtonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  option: {
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    backgroundColor: colors.surface,
+  },
+  optionActive: { borderColor: colors.navy, backgroundColor: colors.navy },
+  optionText: { fontSize: typeScale.base, color: colors.text.secondary },
+  optionTextActive: { color: colors.text.inverse, fontWeight: '600' },
 });

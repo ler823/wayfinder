@@ -3,6 +3,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { OFFICE_CONTACTS, type OfficeContact } from '@/data/officeContacts';
 import { ResponsiveContainer } from '@/components/ResponsiveContainer';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { SectionLabel } from '@/components/ui/SectionLabel';
+import { Divider } from '@/components/ui/Divider';
+import { colors, radius, typeScale } from '@/constants/colors';
 
 function suggestedScript(officeId: string, reason?: string): string {
   const topic = reason ? `about ${reason.toLowerCase()}` : 'about my academic situation';
@@ -56,7 +61,7 @@ export default function OfficeContactScreen() {
       <SafeAreaView style={styles.container}>
         <ResponsiveContainer>
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton} accessibilityRole="button">
-            <Text style={styles.backLabel}>{'< Back'}</Text>
+            <Text style={styles.backLabel}>{'‹ Back'}</Text>
           </TouchableOpacity>
           <Text style={styles.notFound}>Office not found.</Text>
         </ResponsiveContainer>
@@ -71,46 +76,49 @@ export default function OfficeContactScreen() {
       <ScrollView contentContainerStyle={styles.scroll}>
         <ResponsiveContainer>
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton} accessibilityRole="button">
-            <Text style={styles.backLabel}>{'< Back'}</Text>
+            <Text style={styles.backLabel}>{'‹ Back'}</Text>
           </TouchableOpacity>
 
           {reason ? (
-            <View style={styles.reasonCard}>
-              <Text style={styles.reasonHeading}>Why this office</Text>
-              <Text style={styles.reasonText}>
-                {office.name} handles <Text style={styles.reasonBold}>{reason.toLowerCase()}</Text>. They're the right first call.
-              </Text>
-            </View>
+            <Card style={styles.reasonGap}>
+              <View style={styles.reasonInner}>
+                <Text style={styles.reasonHeading}>WHY THIS OFFICE</Text>
+                <Text style={styles.reasonText}>
+                  {office.name} handles{' '}
+                  <Text style={styles.reasonBold}>{reason.toLowerCase()}</Text>. They're the right first call.
+                </Text>
+              </View>
+            </Card>
           ) : null}
 
           <Text style={styles.officeName}>{office.name}</Text>
           <Text style={styles.officeHours}>{office.hours}</Text>
 
-          <TouchableOpacity
-            style={styles.callButton}
+          <Button
+            label={`Call Now — ${office.phone}`}
             onPress={() => Linking.openURL(`tel:${office.phone.replace(/\D/g, '')}`)}
-            accessibilityRole="button"
-          >
-            <Text style={styles.callButtonText}>Call Now — {office.phone}</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.emailButton}
+            style={styles.callGap}
+          />
+          <Button
+            label={`Send Email Instead — ${office.email}`}
             onPress={() => Linking.openURL(`mailto:${office.email}`)}
-            accessibilityRole="button"
-          >
-            <Text style={styles.emailButtonText}>Send Email Instead — {office.email}</Text>
-          </TouchableOpacity>
+            variant="secondary"
+            style={styles.emailGap}
+          />
 
-          <Text style={[styles.sectionLabel, { marginTop: 24 }]}>Suggested opening</Text>
-          <Text style={styles.sectionSubtext}>Adapt this when you call or walk in — you don't need to memorize it.</Text>
-          <View style={styles.scriptBox}>
-            <Text style={styles.scriptText}>{script}</Text>
-          </View>
+          <SectionLabel style={styles.scriptLabel}>Suggested opening</SectionLabel>
+          <Text style={styles.sectionSubtext}>
+            Adapt this when you call or walk in — you don't need to memorize it.
+          </Text>
+          <Card variant="info" style={styles.scriptGap}>
+            <View style={styles.scriptInner}>
+              <Text style={styles.scriptText}>{script}</Text>
+            </View>
+          </Card>
 
-          <View style={styles.divider} />
+          <Divider />
 
-          <Text style={styles.sectionLabel}>Not the right office?</Text>
+          <SectionLabel>Not the right office?</SectionLabel>
           <Text style={styles.sectionSubtext}>These offices may also be able to help.</Text>
           {otherOffices.map((o) => (
             <SmallOfficeRow key={o.id} office={o} />
@@ -122,77 +130,53 @@ export default function OfficeContactScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: colors.background },
   scroll: { paddingBottom: 40 },
-  notFound: { fontSize: 15, color: '#666', marginTop: 20 },
+  notFound: { fontSize: typeScale.base, color: colors.text.secondary, marginTop: 20 },
 
   backButton: { marginTop: 12, marginBottom: 20, alignSelf: 'flex-start' },
-  backLabel: { fontSize: 15, color: '#111', fontWeight: '500' },
+  backLabel: { fontSize: typeScale.base, color: colors.navy, fontWeight: '500' },
 
-  reasonCard: {
-    borderWidth: 1,
-    borderColor: '#e5e5e5',
-    padding: 14,
-    marginBottom: 20,
-  },
+  reasonGap: { marginBottom: 20 },
+  reasonInner: { padding: 14 },
   reasonHeading: {
-    fontSize: 11,
+    fontSize: typeScale.xs,
     fontWeight: '700',
-    color: '#555',
+    color: colors.text.secondary,
     letterSpacing: 0.5,
-    textTransform: 'uppercase',
     marginBottom: 4,
   },
-  reasonText: { fontSize: 14, color: '#333', lineHeight: 21 },
-  reasonBold: { fontWeight: '600', color: '#111' },
+  reasonText: { fontSize: typeScale.sm + 1, color: colors.text.primary, lineHeight: 21 },
+  reasonBold: { fontWeight: '600', color: colors.text.primary },
 
-  officeName: { fontSize: 22, fontWeight: '700', color: '#111', marginBottom: 4 },
-  officeHours: { fontSize: 14, color: '#666', marginBottom: 20 },
+  officeName: { fontSize: typeScale.xl, fontWeight: '700', color: colors.text.primary, marginBottom: 4 },
+  officeHours: { fontSize: typeScale.sm + 1, color: colors.text.secondary, marginBottom: 20 },
 
-  callButton: {
-    backgroundColor: '#111',
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  callButtonText: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  callGap: { marginBottom: 8 },
+  emailGap: { marginBottom: 0 },
 
-  emailButton: {
-    borderWidth: 1,
-    borderColor: '#111',
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  emailButtonText: { color: '#111', fontSize: 15, fontWeight: '600' },
+  scriptLabel: { marginTop: 24 },
+  sectionSubtext: { fontSize: typeScale.sm, color: colors.text.tertiary, marginBottom: 12 },
 
-  sectionLabel: { fontSize: 13, fontWeight: '600', color: '#666', marginBottom: 6 },
-  sectionSubtext: { fontSize: 13, color: '#888', marginBottom: 12 },
-
-  scriptBox: {
-    borderWidth: 1,
-    borderColor: '#e5e5e5',
-    backgroundColor: '#fafafa',
-    padding: 16,
-    marginBottom: 8,
-  },
-  scriptText: { fontSize: 14, color: '#333', lineHeight: 22, fontStyle: 'italic' },
-
-  divider: { height: 1, backgroundColor: '#e5e5e5', marginVertical: 24 },
+  scriptGap: { marginBottom: 8 },
+  scriptInner: { padding: 16 },
+  scriptText: { fontSize: typeScale.sm + 1, color: colors.text.primary, lineHeight: 22, fontStyle: 'italic' },
 
   altOfficeRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     borderWidth: 1,
-    borderColor: '#e5e5e5',
+    borderColor: colors.border,
+    borderRadius: radius.lg,
     padding: 14,
     marginBottom: 8,
+    backgroundColor: colors.surface,
   },
   altOfficeInfo: { flex: 1 },
-  altOfficeName: { fontSize: 14, fontWeight: '600', color: '#111', marginBottom: 2 },
-  altOfficeHours: { fontSize: 12, color: '#888' },
+  altOfficeName: { fontSize: typeScale.sm + 1, fontWeight: '600', color: colors.text.primary, marginBottom: 2 },
+  altOfficeHours: { fontSize: typeScale.xs + 1, color: colors.text.tertiary },
   altOfficeActions: { flexDirection: 'row', alignItems: 'center', gap: 6, marginLeft: 12 },
-  altOfficeLink: { fontSize: 13, fontWeight: '600', color: '#111' },
-  altOfficeDot: { fontSize: 13, color: '#ccc' },
+  altOfficeLink: { fontSize: typeScale.sm, fontWeight: '600', color: colors.navy },
+  altOfficeDot: { fontSize: typeScale.sm, color: colors.disabled },
 });

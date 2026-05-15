@@ -4,6 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useStudentProfile } from '@/context/StudentProfileContext';
 import StepIndicator from '@/components/onboarding/StepIndicator';
 import { ResponsiveContainer } from '@/components/ResponsiveContainer';
+import { Button } from '@/components/ui/Button';
+import { colors, radius, typeScale } from '@/constants/colors';
 
 const SCHOOLS = [
   'Cal State Long Beach',
@@ -32,7 +34,7 @@ export default function SchoolScreen() {
       <ResponsiveContainer style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()}>
-            <Text style={styles.back}>{'< Back'}</Text>
+            <Text style={styles.back}>{'‹ Back'}</Text>
           </TouchableOpacity>
           <StepIndicator current={1} total={4} />
         </View>
@@ -58,38 +60,35 @@ export default function SchoolScreen() {
           </View>
         </ScrollView>
 
-        <TouchableOpacity
-          style={[styles.primaryButton, !profile.school && styles.primaryButtonDisabled]}
+        <Button
+          label="Continue"
           onPress={() => profile.school && router.push('/(onboarding)/profile')}
           disabled={!profile.school}
-        >
-          <Text style={styles.primaryButtonText}>Continue</Text>
-        </TouchableOpacity>
+        />
       </ResponsiveContainer>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#fff' },
+  safeArea: { flex: 1, backgroundColor: colors.background },
   container: { flex: 1, paddingBottom: 32 },
   header: { flexDirection: 'row', alignItems: 'center', paddingVertical: 16, gap: 16 },
-  back: { fontSize: 15, color: '#111' },
+  back: { fontSize: typeScale.base, color: colors.navy, fontWeight: '500' },
   scroll: { flex: 1 },
   scrollContent: { paddingBottom: 24 },
-  title: { fontSize: 22, fontWeight: '700', color: '#111', marginBottom: 8, marginTop: 8 },
-  subtitle: { fontSize: 15, color: '#666', lineHeight: 22, marginBottom: 28 },
-  optionList: { gap: 12 },
+  title: { fontSize: typeScale.xl, fontWeight: '700', color: colors.text.primary, marginBottom: 8, marginTop: 8 },
+  subtitle: { fontSize: typeScale.base, color: colors.text.secondary, lineHeight: 22, marginBottom: 28 },
+  optionList: { gap: 10 },
   option: {
     paddingVertical: 16,
     paddingHorizontal: 16,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    backgroundColor: colors.surface,
   },
-  optionActive: { borderColor: '#111', backgroundColor: '#111' },
-  optionText: { fontSize: 15, color: '#333' },
-  optionTextActive: { color: '#fff', fontWeight: '600' },
-  primaryButton: { backgroundColor: '#111', paddingVertical: 16, alignItems: 'center' },
-  primaryButtonDisabled: { backgroundColor: '#999' },
-  primaryButtonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  optionActive: { borderColor: colors.navy, backgroundColor: colors.navy },
+  optionText: { fontSize: typeScale.base, color: colors.text.secondary },
+  optionTextActive: { color: colors.text.inverse, fontWeight: '600' },
 });

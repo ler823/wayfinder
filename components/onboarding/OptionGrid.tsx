@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
+import { colors, radius, typeScale } from '@/constants/colors';
 
 type Props = {
   options: string[];
@@ -34,12 +35,17 @@ const styles = StyleSheet.create({
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   cell: {
     flex: 1,
-    paddingVertical: 16,
+    paddingVertical: 14,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: colors.border,
+    borderRadius: radius.md,
     alignItems: 'center',
+    backgroundColor: colors.surface,
   },
-  cellActive: { borderColor: '#111', backgroundColor: '#111' },
-  cellText: { fontSize: 15, color: '#333' },
-  cellTextActive: { color: '#fff', fontWeight: '600' },
+  cellActive: {
+    borderColor: colors.navy,
+    backgroundColor: colors.navy,
+  },
+  cellText: { fontSize: typeScale.base, color: colors.text.secondary },
+  cellTextActive: { color: colors.text.inverse, fontWeight: '600' },
 });

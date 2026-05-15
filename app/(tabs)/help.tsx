@@ -11,8 +11,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import { useStudentProfile } from '@/context/StudentProfileContext';
 import { ResponsiveContainer } from '@/components/ResponsiveContainer';
+import { Button } from '@/components/ui/Button';
+import { SectionLabel } from '@/components/ui/SectionLabel';
+import { Divider } from '@/components/ui/Divider';
 import { GLOSSARY } from '@/data/glossary';
 import { OFFICE_CONTACTS } from '@/data/officeContacts';
+import { colors, radius, typeScale } from '@/constants/colors';
 import type { GlossaryTerm } from '@/data/glossary';
 import type { OfficeContact } from '@/data/officeContacts';
 
@@ -28,7 +32,7 @@ function TermRow({
   return (
     <View style={styles.termBlock}>
       <TouchableOpacity
-        style={styles.termRow}
+        style={[styles.termRow, isExpanded && styles.termRowExpanded]}
         onPress={onToggle}
         accessibilityRole="button"
         accessibilityState={{ expanded: isExpanded }}
@@ -100,7 +104,7 @@ export default function HelpScreen() {
           <TextInput
             style={styles.searchInput}
             placeholder="Search terms..."
-            placeholderTextColor="#aaa"
+            placeholderTextColor={colors.text.tertiary}
             value={query}
             onChangeText={(text) => {
               setQuery(text);
@@ -110,7 +114,7 @@ export default function HelpScreen() {
             clearButtonMode="while-editing"
           />
 
-          <Text style={styles.sectionLabel}>Common Terms</Text>
+          <SectionLabel>Common Terms</SectionLabel>
 
           {filtered.length === 0 ? (
             <Text style={styles.emptyText}>No terms match "{query}".</Text>
@@ -125,9 +129,9 @@ export default function HelpScreen() {
             ))
           )}
 
-          <View style={styles.divider} />
+          <Divider />
 
-          <Text style={styles.sectionLabel}>Still Need Help?</Text>
+          <SectionLabel>Still Need Help?</SectionLabel>
           <Text style={styles.sectionSubtext}>
             These offices can answer questions about your specific situation.
           </Text>
@@ -136,16 +140,14 @@ export default function HelpScreen() {
             <OfficeRow key={office.id} office={office} />
           ))}
 
-          <View style={styles.divider} />
+          <Divider />
 
-          <Text style={styles.sectionLabel}>Account</Text>
-          <TouchableOpacity
-            style={styles.resetButton}
+          <SectionLabel>Account</SectionLabel>
+          <Button
+            label="Restart Onboarding"
             onPress={() => dispatch({ type: 'RESET' })}
-            accessibilityRole="button"
-          >
-            <Text style={styles.resetButtonText}>Restart Onboarding</Text>
-          </TouchableOpacity>
+            variant="secondary"
+          />
         </ResponsiveContainer>
       </ScrollView>
     </SafeAreaView>
@@ -153,23 +155,24 @@ export default function HelpScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: colors.background },
   scroll: { paddingBottom: 40 },
-  heading: { fontSize: 22, fontWeight: '700', color: '#111', marginTop: 20, marginBottom: 4 },
-  subheading: { fontSize: 14, color: '#666', marginBottom: 16 },
+  heading: { fontSize: typeScale.xl, fontWeight: '700', color: colors.text.primary, marginTop: 20, marginBottom: 4 },
+  subheading: { fontSize: typeScale.sm + 1, color: colors.text.secondary, marginBottom: 16 },
 
   searchInput: {
     borderWidth: 1,
-    borderColor: '#e5e5e5',
+    borderColor: colors.border,
+    borderRadius: radius.md,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    fontSize: 14,
-    color: '#111',
+    fontSize: typeScale.sm + 1,
+    color: colors.text.primary,
     marginBottom: 20,
+    backgroundColor: colors.surface,
   },
 
-  sectionLabel: { fontSize: 13, fontWeight: '600', color: '#666', marginBottom: 10 },
-  sectionSubtext: { fontSize: 13, color: '#888', marginBottom: 12 },
+  sectionSubtext: { fontSize: typeScale.sm, color: colors.text.tertiary, marginBottom: 12 },
 
   termBlock: { marginBottom: 1 },
   termRow: {
@@ -177,46 +180,50 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#e5e5e5',
+    borderColor: colors.border,
+    borderRadius: radius.lg,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
     paddingHorizontal: 14,
     paddingVertical: 14,
+    backgroundColor: colors.surface,
+    marginBottom: 0,
   },
-  termLabel: { fontSize: 14, fontWeight: '600', color: '#111', flex: 1 },
-  termChevron: { fontSize: 12, color: '#888', marginLeft: 8 },
+  termRowExpanded: {
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+  },
+  termLabel: { fontSize: typeScale.sm + 1, fontWeight: '600', color: colors.text.primary, flex: 1 },
+  termChevron: { fontSize: typeScale.xs + 1, color: colors.text.tertiary, marginLeft: 8 },
   termDefinitionBox: {
     borderWidth: 1,
     borderTopWidth: 0,
-    borderColor: '#e5e5e5',
+    borderColor: colors.border,
+    borderBottomLeftRadius: radius.lg,
+    borderBottomRightRadius: radius.lg,
     padding: 14,
     marginBottom: 8,
+    backgroundColor: colors.surfaceSubtle,
   },
-  termDefinitionText: { fontSize: 14, color: '#333', lineHeight: 21 },
+  termDefinitionText: { fontSize: typeScale.sm + 1, color: colors.text.primary, lineHeight: 21 },
 
-  emptyText: { fontSize: 14, color: '#888', marginBottom: 16 },
-
-  divider: { height: 1, backgroundColor: '#e5e5e5', marginVertical: 24 },
+  emptyText: { fontSize: typeScale.sm + 1, color: colors.text.tertiary, marginBottom: 16 },
 
   officeRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     borderWidth: 1,
-    borderColor: '#e5e5e5',
+    borderColor: colors.border,
+    borderRadius: radius.lg,
     padding: 14,
     marginBottom: 8,
+    backgroundColor: colors.surface,
   },
   officeInfo: { flex: 1 },
-  officeName: { fontSize: 14, fontWeight: '600', color: '#111', marginBottom: 2 },
-  officeHours: { fontSize: 12, color: '#888' },
+  officeName: { fontSize: typeScale.sm + 1, fontWeight: '600', color: colors.text.primary, marginBottom: 2 },
+  officeHours: { fontSize: typeScale.xs + 1, color: colors.text.tertiary },
   officeLinks: { flexDirection: 'row', alignItems: 'center', gap: 6, marginLeft: 12 },
-  officeLink: { fontSize: 13, fontWeight: '600', color: '#111' },
-  officeLinkDivider: { fontSize: 13, color: '#ccc' },
-
-  resetButton: {
-    borderWidth: 1,
-    borderColor: '#111',
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  resetButtonText: { fontSize: 15, fontWeight: '600', color: '#111' },
+  officeLink: { fontSize: typeScale.sm, fontWeight: '600', color: colors.navy },
+  officeLinkDivider: { fontSize: typeScale.sm, color: colors.disabled },
 });

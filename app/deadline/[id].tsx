@@ -5,13 +5,18 @@ import { differenceInDays, format, parseISO } from 'date-fns';
 import { useDeadlines } from '@/context/DeadlinesContext';
 import { OFFICE_CONTACTS } from '@/data/officeContacts';
 import { ResponsiveContainer } from '@/components/ResponsiveContainer';
-import type { ChecklistStep } from '@/types/deadline';
+import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
+import { Card } from '@/components/ui/Card';
+import { SectionLabel } from '@/components/ui/SectionLabel';
+import { colors, radius, typeScale } from '@/constants/colors';
+import type { ChecklistStep, DeadlineCategory } from '@/types/deadline';
 
-const CATEGORY_LABELS: Record<string, string> = {
+const CATEGORY_LABELS: Record<DeadlineCategory, string> = {
   'financial-aid': 'Financial Aid',
-  'academic': 'Academic',
-  'registration': 'Registration',
-  'advising': 'Advising',
+  academic:        'Academic',
+  registration:    'Registration',
+  advising:        'Advising',
 };
 
 function dueLineLabel(days: number, formattedDate: string): string {
@@ -32,7 +37,13 @@ function StepRow({ step, onToggle }: { step: ChecklistStep; onToggle: () => void
       accessibilityRole="checkbox"
       accessibilityState={{ checked: isDone }}
     >
-      <View style={[styles.stepCheck, isDone && styles.stepCheckDone, isInProgress && styles.stepCheckInProgress]}>
+      <View
+        style={[
+          styles.stepCheck,
+          isDone && styles.stepCheckDone,
+          isInProgress && styles.stepCheckInProgress,
+        ]}
+      >
         {isDone && <Text style={styles.stepCheckMark}>✓</Text>}
         {isInProgress && <Text style={styles.stepCheckMark}>–</Text>}
       </View>
@@ -53,7 +64,7 @@ export default function DeadlineDetailScreen() {
       <SafeAreaView style={styles.container}>
         <ResponsiveContainer>
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <Text style={styles.backLabel}>{'< Back'}</Text>
+            <Text style={styles.backLabel}>{'‹ Back'}</Text>
           </TouchableOpacity>
           <Text style={styles.notFound}>Deadline not found.</Text>
         </ResponsiveContainer>
@@ -85,84 +96,82 @@ export default function DeadlineDetailScreen() {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scroll}>
         <ResponsiveContainer>
-          {/* Back button */}
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton} accessibilityRole="button">
-            <Text style={styles.backLabel}>{'< Back'}</Text>
+            <Text style={styles.backLabel}>{'‹ Back'}</Text>
           </TouchableOpacity>
 
-          {/* Title + meta */}
           <Text style={styles.title}>{deadline.title}</Text>
           <Text style={[styles.dueLabel, isUrgent && styles.dueLabelUrgent]}>
             {dueLineLabel(days, formattedDate)}
           </Text>
-          <Text style={styles.categoryLabel}>
-            {CATEGORY_LABELS[deadline.category] ?? deadline.category}
-          </Text>
-
-          {/* Consequence — first and prominent */}
-          <View style={[styles.consequenceCard, isUrgent && styles.consequenceCardUrgent]}>
-            <Text style={styles.consequenceHeading}>What happens if you miss this</Text>
-            <Text style={styles.consequenceText}>{deadline.consequence}</Text>
+          <View style={styles.badgeRow}>
+            <Badge category={deadline.category} label={CATEGORY_LABELS[deadline.category]} />
           </View>
 
-          {/* Action checklist */}
+          <Card variant={isUrgent ? 'urgent' : 'default'} style={styles.consequenceGap}>
+            <View style={styles.consequenceInner}>
+              <Text style={styles.consequenceHeading}>WHAT HAPPENS IF YOU MISS THIS</Text>
+              <Text style={styles.consequenceText}>{deadline.consequence}</Text>
+            </View>
+          </Card>
+
           {deadline.steps.length > 0 && (
             <>
               <View style={styles.sectionHeader}>
-                <Text style={styles.sectionLabel}>What you need to do</Text>
-                {allDone && <Text style={styles.allDoneLabel}>All done</Text>}
+                <SectionLabel style={{ marginBottom: 0 }}>What you need to do</SectionLabel>
+                {allDone && <Text style={styles.allDoneLabel}>All done ✓</Text>}
               </View>
-              {deadline.steps.map((step) => (
-                <StepRow
-                  key={step.id}
-                  step={step}
-                  onToggle={() => toggleStep(step.id, step.status)}
-                />
-              ))}
+              <View style={styles.stepList}>
+                {deadline.steps.map((step) => (
+                  <StepRow
+                    key={step.id}
+                    step={step}
+                    onToggle={() => toggleStep(step.id, step.status)}
+                  />
+                ))}
+              </View>
             </>
           )}
 
-          {/* Office contact */}
           {office && (
             <>
-              <Text style={[styles.sectionLabel, { marginTop: 24 }]}>Need help?</Text>
-              <View style={styles.officeCard}>
-                <Text style={styles.officeName}>{office.name}</Text>
-                <Text style={styles.officeHours}>{office.hours}</Text>
-                <TouchableOpacity
-                  style={styles.callButton}
-                  onPress={() => Linking.openURL(`tel:${office.phone.replace(/\D/g, '')}`)}
-                  accessibilityRole="button"
-                >
-                  <Text style={styles.callButtonText}>Call {office.phone}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.emailButton}
-                  onPress={() => Linking.openURL(`mailto:${office.email}`)}
-                  accessibilityRole="button"
-                >
-                  <Text style={styles.emailButtonText}>Email {office.email}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.viewOfficeLink}
-                  onPress={() =>
-                    router.push({
-                      pathname: '/office/[officeId]',
-                      params: { officeId: office.id, reason: deadline.title },
-                    })
-                  }
-                  accessibilityRole="button"
-                >
-                  <Text style={styles.viewOfficeLinkText}>View full contact info →</Text>
-                </TouchableOpacity>
-              </View>
+              <SectionLabel style={styles.needHelpLabel}>Need help?</SectionLabel>
+              <Card style={styles.officeCardGap}>
+                <View style={styles.officeCardInner}>
+                  <Text style={styles.officeName}>{office.name}</Text>
+                  <Text style={styles.officeHours}>{office.hours}</Text>
+                  <Button
+                    label={`Call ${office.phone}`}
+                    onPress={() => Linking.openURL(`tel:${office.phone.replace(/\D/g, '')}`)}
+                    style={styles.callGap}
+                  />
+                  <Button
+                    label={`Email ${office.email}`}
+                    onPress={() => Linking.openURL(`mailto:${office.email}`)}
+                    variant="secondary"
+                    style={styles.emailGap}
+                  />
+                  <Button
+                    label="View full contact info →"
+                    onPress={() =>
+                      router.push({
+                        pathname: '/office/[officeId]',
+                        params: { officeId: office.id, reason: deadline.title },
+                      })
+                    }
+                    variant="ghost"
+                  />
+                </View>
+              </Card>
             </>
           )}
 
-          {/* Save and exit */}
-          <TouchableOpacity style={styles.saveButton} onPress={saveProgress} accessibilityRole="button">
-            <Text style={styles.saveButtonText}>Save and come back later</Text>
-          </TouchableOpacity>
+          <Button
+            label="Save and come back later"
+            onPress={saveProgress}
+            variant="secondary"
+            style={styles.saveGap}
+          />
         </ResponsiveContainer>
       </ScrollView>
     </SafeAreaView>
@@ -170,95 +179,72 @@ export default function DeadlineDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: colors.background },
   scroll: { paddingBottom: 40 },
-  notFound: { fontSize: 15, color: '#666', marginTop: 20 },
+  notFound: { fontSize: typeScale.base, color: colors.text.secondary, marginTop: 20 },
 
   backButton: { marginTop: 12, marginBottom: 20, alignSelf: 'flex-start' },
-  backLabel: { fontSize: 15, color: '#111', fontWeight: '500' },
+  backLabel: { fontSize: typeScale.base, color: colors.navy, fontWeight: '500' },
 
-  title: { fontSize: 22, fontWeight: '700', color: '#111', marginBottom: 6 },
-  dueLabel: { fontSize: 14, color: '#666', marginBottom: 4 },
-  dueLabelUrgent: { color: '#111', fontWeight: '700' },
-  categoryLabel: { fontSize: 12, color: '#888', marginBottom: 20 },
+  title: { fontSize: typeScale.xl, fontWeight: '700', color: colors.text.primary, marginBottom: 6 },
+  dueLabel: { fontSize: typeScale.sm + 1, color: colors.text.secondary, marginBottom: 8 },
+  dueLabelUrgent: { color: colors.urgent, fontWeight: '700' },
+  badgeRow: { marginBottom: 20 },
 
-  consequenceCard: {
-    borderWidth: 1,
-    borderColor: '#e5e5e5',
-    padding: 16,
-    marginBottom: 24,
-  },
-  consequenceCardUrgent: { borderColor: '#111' },
+  consequenceGap: { marginBottom: 24 },
+  consequenceInner: { padding: 16 },
   consequenceHeading: {
-    fontSize: 11,
+    fontSize: typeScale.xs,
     fontWeight: '700',
-    color: '#111',
+    color: colors.text.secondary,
     letterSpacing: 0.5,
     marginBottom: 6,
-    textTransform: 'uppercase',
   },
-  consequenceText: { fontSize: 15, color: '#333', lineHeight: 22 },
+  consequenceText: { fontSize: typeScale.base, color: colors.text.primary, lineHeight: 22 },
 
-  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
-  sectionLabel: { fontSize: 13, fontWeight: '600', color: '#666' },
-  allDoneLabel: { fontSize: 12, color: '#444', fontWeight: '600' },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  allDoneLabel: { fontSize: typeScale.xs + 1, color: colors.success, fontWeight: '600' },
 
+  stepList: { gap: 8, marginBottom: 24 },
   stepRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     borderWidth: 1,
-    borderColor: '#e5e5e5',
+    borderColor: colors.border,
+    borderRadius: radius.lg,
     padding: 14,
-    marginBottom: 8,
     gap: 12,
+    backgroundColor: colors.surface,
   },
   stepCheck: {
     width: 20,
     height: 20,
     borderWidth: 1.5,
-    borderColor: '#888',
+    borderColor: colors.text.tertiary,
+    borderRadius: radius.sm,
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
     marginTop: 1,
   },
-  stepCheckDone: { borderColor: '#111', backgroundColor: '#111' },
-  stepCheckInProgress: { borderColor: '#888', backgroundColor: '#eee' },
-  stepCheckMark: { fontSize: 11, color: '#fff', fontWeight: '700' },
-  stepLabel: { flex: 1, fontSize: 14, color: '#222', lineHeight: 20 },
-  stepLabelDone: { color: '#999', textDecorationLine: 'line-through' },
+  stepCheckDone: { borderColor: colors.success, backgroundColor: colors.success },
+  stepCheckInProgress: { borderColor: colors.text.tertiary, backgroundColor: '#E8E4E0' },
+  stepCheckMark: { fontSize: 11, color: colors.text.inverse, fontWeight: '700' },
+  stepLabel: { flex: 1, fontSize: typeScale.sm + 1, color: colors.text.primary, lineHeight: 20 },
+  stepLabelDone: { color: colors.text.tertiary, textDecorationLine: 'line-through' },
 
-  officeCard: {
-    borderWidth: 1,
-    borderColor: '#e5e5e5',
-    padding: 16,
-    marginBottom: 24,
-  },
-  officeName: { fontSize: 15, fontWeight: '600', color: '#111', marginBottom: 4 },
-  officeHours: { fontSize: 13, color: '#666', marginBottom: 16 },
-  callButton: {
-    backgroundColor: '#111',
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  callButtonText: { color: '#fff', fontSize: 15, fontWeight: '600' },
-  emailButton: {
-    borderWidth: 1,
-    borderColor: '#111',
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  emailButtonText: { color: '#111', fontSize: 15, fontWeight: '600' },
+  needHelpLabel: { marginTop: 24 },
+  officeCardGap: { marginBottom: 24 },
+  officeCardInner: { padding: 16 },
+  officeName: { fontSize: typeScale.base, fontWeight: '600', color: colors.text.primary, marginBottom: 4 },
+  officeHours: { fontSize: typeScale.sm, color: colors.text.secondary, marginBottom: 16 },
+  callGap: { marginBottom: 8 },
+  emailGap: { marginBottom: 4 },
 
-  saveButton: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  saveButtonText: { fontSize: 15, color: '#666' },
-
-  viewOfficeLink: { paddingTop: 12, alignItems: 'center' },
-  viewOfficeLinkText: { fontSize: 13, color: '#555', fontWeight: '500' },
+  saveGap: {},
 });

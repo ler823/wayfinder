@@ -4,13 +4,15 @@ import { useRouter } from 'expo-router';
 import { differenceInDays, parseISO } from 'date-fns';
 import { useDeadlines } from '@/context/DeadlinesContext';
 import { ResponsiveContainer } from '@/components/ResponsiveContainer';
-import type { Deadline } from '@/types/deadline';
+import { Badge } from '@/components/ui/Badge';
+import { colors, radius, typeScale } from '@/constants/colors';
+import type { Deadline, DeadlineCategory } from '@/types/deadline';
 
-const CATEGORY_LABELS: Record<string, string> = {
+const CATEGORY_LABELS: Record<DeadlineCategory, string> = {
   'financial-aid': 'Financial Aid',
-  'academic': 'Academic',
-  'registration': 'Registration',
-  'advising': 'Advising',
+  academic:        'Academic',
+  registration:    'Registration',
+  advising:        'Advising',
 };
 
 function daysLabel(dueDate: string): string {
@@ -44,17 +46,15 @@ function DeadlineCard({ deadline, onPress }: { deadline: Deadline; onPress: () =
           </Text>
         </View>
         <View style={styles.cardBottom}>
-          <Text style={styles.categoryLabel}>
-            {CATEGORY_LABELS[deadline.category] ?? deadline.category}
-          </Text>
+          <Badge category={deadline.category} label={CATEGORY_LABELS[deadline.category]} />
           {deadline.steps.length > 0 && (
             <Text style={styles.stepsLabel}>
-              {allDone ? 'All steps done' : `${completedSteps} of ${deadline.steps.length} steps done`}
+              {allDone ? 'All steps done ✓' : `${completedSteps} / ${deadline.steps.length} steps`}
             </Text>
           )}
         </View>
       </View>
-      <Text style={styles.chevron}>{'>'}</Text>
+      <Text style={styles.chevron}>{'›'}</Text>
     </TouchableOpacity>
   );
 }
@@ -87,34 +87,36 @@ export default function DeadlinesScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: colors.background },
   scroll: { paddingBottom: 32 },
-  heading: { fontSize: 22, fontWeight: '700', color: '#111', marginTop: 20, marginBottom: 4 },
-  subheading: { fontSize: 14, color: '#666', marginBottom: 24 },
+  heading: { fontSize: typeScale.xl, fontWeight: '700', color: colors.text.primary, marginTop: 20, marginBottom: 4 },
+  subheading: { fontSize: typeScale.sm + 1, color: colors.text.secondary, marginBottom: 24 },
 
   card: {
     flexDirection: 'row',
     borderWidth: 1,
-    borderColor: '#e5e5e5',
+    borderColor: colors.border,
+    borderRadius: radius.lg,
     marginBottom: 12,
     alignItems: 'center',
+    backgroundColor: colors.surface,
+    overflow: 'hidden',
   },
-  cardUrgent: { borderColor: '#111' },
-  cardAccent: { width: 4, backgroundColor: '#e5e5e5', alignSelf: 'stretch' },
-  cardAccentUrgent: { backgroundColor: '#111' },
+  cardUrgent: { borderColor: colors.urgent },
+  cardAccent: { width: 4, backgroundColor: colors.border, alignSelf: 'stretch' },
+  cardAccentUrgent: { backgroundColor: colors.urgent },
   cardBody: { flex: 1, padding: 14 },
   cardTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 6,
+    marginBottom: 8,
     gap: 8,
   },
-  cardTitle: { flex: 1, fontSize: 15, fontWeight: '600', color: '#111' },
-  daysLabel: { fontSize: 12, color: '#666', fontWeight: '500', flexShrink: 0 },
-  daysLabelUrgent: { color: '#111', fontWeight: '700' },
-  cardBottom: { flexDirection: 'row', justifyContent: 'space-between' },
-  categoryLabel: { fontSize: 12, color: '#888' },
-  stepsLabel: { fontSize: 12, color: '#888' },
-  chevron: { paddingHorizontal: 14, fontSize: 14, color: '#999' },
+  cardTitle: { flex: 1, fontSize: typeScale.base, fontWeight: '600', color: colors.text.primary },
+  daysLabel: { fontSize: typeScale.xs + 1, color: colors.text.secondary, fontWeight: '500', flexShrink: 0 },
+  daysLabelUrgent: { color: colors.urgent, fontWeight: '700' },
+  cardBottom: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  stepsLabel: { fontSize: typeScale.xs + 1, color: colors.text.tertiary },
+  chevron: { paddingHorizontal: 14, fontSize: 18, color: colors.text.tertiary },
 });

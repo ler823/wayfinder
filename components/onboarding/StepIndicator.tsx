@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native';
+import { colors, typeScale } from '@/constants/colors';
 
 type Props = {
   current: number;
@@ -20,7 +21,7 @@ export default function StepIndicator({ current, total }: Props) {
 
 const styles = StyleSheet.create({
   container: { flexDirection: 'row', alignItems: 'center', gap: 4, flex: 1 },
-  segment: { height: 4, flex: 1, backgroundColor: '#ddd' },
-  segmentFilled: { backgroundColor: '#111' },
-  label: { fontSize: 12, color: '#666', marginLeft: 8, whiteSpace: 'nowrap' } as any,
+  segment: { height: 4, flex: 1, backgroundColor: colors.border },
+  segmentFilled: { backgroundColor: colors.navy },
+  label: { fontSize: typeScale.xs, color: colors.text.secondary, marginLeft: 8, whiteSpace: 'nowrap' } as any,
 });

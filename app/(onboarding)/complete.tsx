@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useStudentProfile } from '@/context/StudentProfileContext';
 import { MAX_CONTENT_WIDTH } from '@/constants/layout';
+import { colors, typeScale } from '@/constants/colors';
 
 export default function CompleteScreen() {
   const router = useRouter();
@@ -20,7 +21,7 @@ export default function CompleteScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={[styles.content, { maxWidth: MAX_CONTENT_WIDTH.tablet }]}>
-        <ActivityIndicator size="large" color="#111" />
+        <ActivityIndicator size="large" color={colors.navy} />
         <Text style={styles.message}>
           We're setting up your dashboard based on your answers.
         </Text>
@@ -30,7 +31,7 @@ export default function CompleteScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center' },
+  container: { flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' },
   content: { alignItems: 'center', paddingHorizontal: 32, gap: 24, width: '100%' },
-  message: { fontSize: 17, color: '#444', textAlign: 'center', lineHeight: 26 },
+  message: { fontSize: typeScale.md, color: colors.text.secondary, textAlign: 'center', lineHeight: 26 },
 });

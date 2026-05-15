@@ -5,6 +5,8 @@ import { useDeadlines } from '@/context/DeadlinesContext';
 import { differenceInDays, parseISO } from 'date-fns';
 import { useRouter } from 'expo-router';
 import { ResponsiveContainer } from '@/components/ResponsiveContainer';
+import { SectionLabel } from '@/components/ui/SectionLabel';
+import { colors, radius, typeScale } from '@/constants/colors';
 
 export default function HomeScreen() {
   const { profile } = useStudentProfile();
@@ -44,11 +46,11 @@ export default function HomeScreen() {
                   to view
                 </Text>
               </View>
-              <Text style={styles.chevron}>{'>'}</Text>
+              <Text style={styles.chevron}>{'›'}</Text>
             </TouchableOpacity>
           )}
 
-          <Text style={styles.sectionLabel}>This Week's Tasks (3)</Text>
+          <SectionLabel style={styles.sectionGap}>This Week's Tasks (3)</SectionLabel>
 
           {[
             'Review Spring Registration Dates',
@@ -58,11 +60,11 @@ export default function HomeScreen() {
             <View key={task} style={styles.taskRow}>
               <View style={styles.checkbox} />
               <Text style={styles.taskLabel}>{task}</Text>
-              <Text style={styles.chevron}>{'>'}</Text>
+              <Text style={styles.chevron}>{'›'}</Text>
             </View>
           ))}
 
-          <Text style={styles.sectionLabel}>Degree Progress</Text>
+          <SectionLabel style={styles.sectionGap}>Degree Progress</SectionLabel>
           <View style={styles.progressCard}>
             <View style={styles.progressBarTrack}>
               <View
@@ -85,14 +87,14 @@ export default function HomeScreen() {
             </Text>
           </View>
 
-          <Text style={styles.sectionLabel}>Recent Alerts</Text>
+          <SectionLabel style={styles.sectionGap}>Recent Alerts</SectionLabel>
           <TouchableOpacity
             style={styles.alertRow}
             onPress={() => router.push('/recovery/probation')}
             accessibilityRole="button"
           >
             <Text style={styles.alertText}>Alert — Academic standing update available</Text>
-            <Text style={styles.chevron}>{'>'}</Text>
+            <Text style={styles.chevron}>{'›'}</Text>
           </TouchableOpacity>
         </ResponsiveContainer>
       </ScrollView>
@@ -101,61 +103,75 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: colors.background },
   scroll: { paddingBottom: 32 },
-  greeting: { fontSize: 20, fontWeight: '700', color: '#111', marginTop: 20 },
-  subGreeting: { fontSize: 14, color: '#666', marginBottom: 24, marginTop: 2 },
+  greeting: { fontSize: typeScale.lg, fontWeight: '700', color: colors.text.primary, marginTop: 20 },
+  subGreeting: { fontSize: typeScale.sm, color: colors.text.secondary, marginBottom: 24, marginTop: 2 },
 
   urgentCard: {
     flexDirection: 'row',
-    borderWidth: 1,
-    borderColor: '#111',
+    borderWidth: 1.5,
+    borderColor: colors.urgent,
+    borderRadius: radius.lg,
     marginBottom: 24,
     alignItems: 'center',
-    paddingRight: 14,
+    overflow: 'hidden',
+    backgroundColor: colors.surface,
   },
-  urgentAccent: { width: 5, backgroundColor: '#111', alignSelf: 'stretch' },
+  urgentAccent: { width: 5, backgroundColor: colors.urgent, alignSelf: 'stretch' },
   urgentBody: { flex: 1, padding: 14 },
   urgentLabel: {
-    fontSize: 11,
+    fontSize: typeScale.xs,
     fontWeight: '700',
-    color: '#111',
+    color: colors.urgent,
     letterSpacing: 0.5,
     marginBottom: 4,
   },
-  urgentTitle: { fontSize: 15, fontWeight: '600', color: '#111', marginBottom: 4 },
-  urgentMeta: { fontSize: 13, color: '#555' },
+  urgentTitle: { fontSize: typeScale.base, fontWeight: '600', color: colors.text.primary, marginBottom: 4 },
+  urgentMeta: { fontSize: typeScale.sm, color: colors.text.secondary },
 
-  sectionLabel: { fontSize: 13, fontWeight: '600', color: '#666', marginBottom: 10, marginTop: 4 },
+  sectionGap: { marginTop: 4 },
 
   taskRow: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#e5e5e5',
+    borderColor: colors.border,
+    borderRadius: radius.lg,
     padding: 14,
     marginBottom: 8,
     gap: 12,
+    backgroundColor: colors.surface,
   },
-  checkbox: { width: 18, height: 18, borderWidth: 1.5, borderColor: '#888' },
-  taskLabel: { flex: 1, fontSize: 14, color: '#222' },
+  checkbox: {
+    width: 18,
+    height: 18,
+    borderWidth: 1.5,
+    borderColor: colors.text.tertiary,
+    borderRadius: radius.sm,
+  },
+  taskLabel: { flex: 1, fontSize: typeScale.sm + 1, color: colors.text.primary },
 
   progressCard: {
     borderWidth: 1,
-    borderColor: '#e5e5e5',
+    borderColor: colors.border,
+    borderRadius: radius.lg,
     padding: 14,
     marginBottom: 24,
+    backgroundColor: colors.surface,
   },
   progressBarTrack: {
     height: 28,
-    backgroundColor: '#eee',
+    backgroundColor: '#E8E4E0',
+    borderRadius: radius.sm,
     marginBottom: 8,
     justifyContent: 'center',
     position: 'relative',
+    overflow: 'hidden',
   },
   progressBarFill: {
     height: '100%',
-    backgroundColor: '#111',
+    backgroundColor: colors.navy,
     position: 'absolute',
     left: 0,
   },
@@ -164,20 +180,22 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '100%',
     textAlign: 'center',
-    fontSize: 13,
+    fontSize: typeScale.sm,
     fontWeight: '700',
-    color: '#fff',
+    color: colors.text.inverse,
   },
-  progressMeta: { fontSize: 13, color: '#555' },
+  progressMeta: { fontSize: typeScale.sm, color: colors.text.secondary },
 
   alertRow: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#e5e5e5',
+    borderColor: colors.border,
+    borderRadius: radius.lg,
     padding: 14,
     marginBottom: 8,
+    backgroundColor: colors.surface,
   },
-  alertText: { flex: 1, fontSize: 14, color: '#222' },
-  chevron: { fontSize: 14, color: '#999' },
+  alertText: { flex: 1, fontSize: typeScale.sm + 1, color: colors.text.primary },
+  chevron: { fontSize: 18, color: colors.text.tertiary },
 });

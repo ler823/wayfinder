@@ -14,7 +14,12 @@ import { useAdvising } from '@/context/AdvisingContext';
 import { useStudentProfile } from '@/context/StudentProfileContext';
 import { useSemesterPlan } from '@/context/SemesterPlanContext';
 import { ResponsiveContainer } from '@/components/ResponsiveContainer';
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { SectionLabel } from '@/components/ui/SectionLabel';
+import { Divider } from '@/components/ui/Divider';
 import { OFFICE_CONTACTS } from '@/data/officeContacts';
+import { colors, radius, typeScale } from '@/constants/colors';
 import type { AdvisingTopic, PrepSheetItem, FollowUpTask } from '@/types/advising';
 
 const advisingOffice = OFFICE_CONTACTS.find((o) => o.id === 'advising')!;
@@ -82,7 +87,7 @@ function PrepItemRow({
       <TextInput
         style={styles.notesInput}
         placeholder="Add a note..."
-        placeholderTextColor="#aaa"
+        placeholderTextColor={colors.text.tertiary}
         value={item.notes}
         onChangeText={onNotesChange}
         returnKeyType="done"
@@ -144,7 +149,7 @@ export default function AdvisingScreen() {
               style={styles.backButton}
               accessibilityRole="button"
             >
-              <Text style={styles.backLabel}>{'< Edit Topics'}</Text>
+              <Text style={styles.backLabel}>{'‹ Edit Topics'}</Text>
             </TouchableOpacity>
 
             <Text style={styles.heading}>Your Prep Sheet</Text>
@@ -163,9 +168,9 @@ export default function AdvisingScreen() {
               />
             ))}
 
-            <View style={styles.divider} />
+            <Divider />
 
-            <Text style={styles.sectionLabel}>After Your Meeting</Text>
+            <SectionLabel>After Your Meeting</SectionLabel>
             <Text style={styles.sectionSubtext}>
               Record any action items your advisor gave you so they show up on your dashboard.
             </Text>
@@ -174,7 +179,7 @@ export default function AdvisingScreen() {
               <TextInput
                 style={styles.addInput}
                 placeholder="e.g. Submit appeal form by Friday"
-                placeholderTextColor="#aaa"
+                placeholderTextColor={colors.text.tertiary}
                 value={followUpInput}
                 onChangeText={setFollowUpInput}
                 onSubmitEditing={addFollowUp}
@@ -186,7 +191,9 @@ export default function AdvisingScreen() {
                 disabled={!followUpInput.trim()}
                 accessibilityRole="button"
               >
-                <Text style={styles.addButtonText}>Add</Text>
+                <Text style={[styles.addButtonText, !followUpInput.trim() && styles.addButtonTextDisabled]}>
+                  Add
+                </Text>
               </TouchableOpacity>
             </View>
 
@@ -202,39 +209,36 @@ export default function AdvisingScreen() {
               </View>
             )}
 
-            <View style={styles.divider} />
+            <Divider />
 
-            <Text style={styles.sectionLabel}>Need to Make an Appointment?</Text>
-            <View style={styles.officeCard}>
-              <Text style={styles.officeName}>{advisingOffice.name}</Text>
-              <Text style={styles.officeHours}>{advisingOffice.hours}</Text>
-              <TouchableOpacity
-                style={styles.callButton}
-                onPress={() => Linking.openURL(`tel:${advisingOffice.phone.replace(/\D/g, '')}`)}
-                accessibilityRole="button"
-              >
-                <Text style={styles.callButtonText}>Call {advisingOffice.phone}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.emailButton}
-                onPress={() => Linking.openURL(`mailto:${advisingOffice.email}`)}
-                accessibilityRole="button"
-              >
-                <Text style={styles.emailButtonText}>Email {advisingOffice.email}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.viewOfficeLink}
-                onPress={() =>
-                  router.push({
-                    pathname: '/office/[officeId]',
-                    params: { officeId: advisingOffice.id, reason: 'advising appointment' },
-                  })
-                }
-                accessibilityRole="button"
-              >
-                <Text style={styles.viewOfficeLinkText}>View full contact info →</Text>
-              </TouchableOpacity>
-            </View>
+            <SectionLabel>Need to Make an Appointment?</SectionLabel>
+            <Card style={styles.officeCardGap}>
+              <View style={styles.officeCardInner}>
+                <Text style={styles.officeName}>{advisingOffice.name}</Text>
+                <Text style={styles.officeHours}>{advisingOffice.hours}</Text>
+                <Button
+                  label={`Call ${advisingOffice.phone}`}
+                  onPress={() => Linking.openURL(`tel:${advisingOffice.phone.replace(/\D/g, '')}`)}
+                  style={styles.callGap}
+                />
+                <Button
+                  label={`Email ${advisingOffice.email}`}
+                  onPress={() => Linking.openURL(`mailto:${advisingOffice.email}`)}
+                  variant="secondary"
+                  style={styles.emailGap}
+                />
+                <Button
+                  label="View full contact info →"
+                  onPress={() =>
+                    router.push({
+                      pathname: '/office/[officeId]',
+                      params: { officeId: advisingOffice.id, reason: 'advising appointment' },
+                    })
+                  }
+                  variant="ghost"
+                />
+              </View>
+            </Card>
           </ResponsiveContainer>
         </ScrollView>
       </SafeAreaView>
@@ -250,22 +254,22 @@ export default function AdvisingScreen() {
             Build a prep sheet for your next advising appointment so you get the most out of it.
           </Text>
 
-          {/* Summary card */}
-          <View style={styles.summaryCard}>
-            <Text style={styles.summaryLine}>
-              <Text style={styles.summaryBold}>{profile.standing}</Text>
-              {profile.major ? ` · ${profile.major}` : ''}
-            </Text>
-            <Text style={styles.summaryLine}>
-              Semester plan:{' '}
-              <Text style={styles.summaryBold}>
-                {plan.savedAt ? 'Saved — ready to review with advisor' : 'Not yet saved'}
+          <Card style={styles.summaryGap}>
+            <View style={styles.summaryInner}>
+              <Text style={styles.summaryLine}>
+                <Text style={styles.summaryBold}>{profile.standing}</Text>
+                {profile.major ? ` · ${profile.major}` : ''}
               </Text>
-            </Text>
-          </View>
+              <Text style={styles.summaryLine}>
+                Semester plan:{' '}
+                <Text style={styles.summaryBold}>
+                  {plan.savedAt ? 'Saved — ready to review with advisor' : 'Not yet saved'}
+                </Text>
+              </Text>
+            </View>
+          </Card>
 
-          {/* Topics */}
-          <Text style={styles.sectionLabel}>Topics to Discuss</Text>
+          <SectionLabel>Topics to Discuss</SectionLabel>
           <Text style={styles.sectionSubtext}>
             These were suggested based on your profile and activity. Uncheck anything you don't need.
           </Text>
@@ -283,12 +287,11 @@ export default function AdvisingScreen() {
             />
           ))}
 
-          {/* Add custom topic */}
           <View style={styles.inputRow}>
             <TextInput
               style={styles.addInput}
               placeholder="Add your own topic..."
-              placeholderTextColor="#aaa"
+              placeholderTextColor={colors.text.tertiary}
               value={customInput}
               onChangeText={setCustomInput}
               onSubmitEditing={addCustomTopic}
@@ -300,22 +303,22 @@ export default function AdvisingScreen() {
               disabled={!customInput.trim()}
               accessibilityRole="button"
             >
-              <Text style={styles.addButtonText}>Add</Text>
+              <Text style={[styles.addButtonText, !customInput.trim() && styles.addButtonTextDisabled]}>
+                Add
+              </Text>
             </TouchableOpacity>
           </View>
 
-          {/* Build prep sheet */}
-          <TouchableOpacity
-            style={[styles.buildButton, checkedCount === 0 && styles.buildButtonDisabled]}
+          <Button
+            label={
+              checkedCount > 0
+                ? `Build My Prep Sheet (${checkedCount} topic${checkedCount > 1 ? 's' : ''})`
+                : 'Build My Prep Sheet'
+            }
             onPress={() => dispatch({ type: 'BUILD_PREP_SHEET' })}
             disabled={checkedCount === 0}
-            accessibilityRole="button"
-          >
-            <Text style={styles.buildButtonText}>
-              Build My Prep Sheet
-              {checkedCount > 0 ? ` (${checkedCount} topic${checkedCount > 1 ? 's' : ''})` : ''}
-            </Text>
-          </TouchableOpacity>
+            style={styles.buildGap}
+          />
 
           {checkedCount === 0 && (
             <Text style={styles.noneSelectedHint}>
@@ -329,33 +332,30 @@ export default function AdvisingScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: colors.background },
   scroll: { paddingBottom: 40 },
-  heading: { fontSize: 22, fontWeight: '700', color: '#111', marginTop: 20, marginBottom: 4 },
-  subheading: { fontSize: 14, color: '#666', marginBottom: 20 },
+  heading: { fontSize: typeScale.xl, fontWeight: '700', color: colors.text.primary, marginTop: 20, marginBottom: 4 },
+  subheading: { fontSize: typeScale.sm + 1, color: colors.text.secondary, marginBottom: 20 },
 
   backButton: { marginTop: 12, marginBottom: 20, alignSelf: 'flex-start' },
-  backLabel: { fontSize: 15, color: '#111', fontWeight: '500' },
+  backLabel: { fontSize: typeScale.base, color: colors.navy, fontWeight: '500' },
 
-  summaryCard: {
-    borderWidth: 1,
-    borderColor: '#e5e5e5',
-    padding: 14,
-    marginBottom: 24,
-    gap: 4,
-  },
-  summaryLine: { fontSize: 13, color: '#555' },
-  summaryBold: { fontWeight: '600', color: '#111' },
+  summaryGap: { marginBottom: 24 },
+  summaryInner: { padding: 14, gap: 4 },
+  summaryLine: { fontSize: typeScale.sm, color: colors.text.secondary },
+  summaryBold: { fontWeight: '600', color: colors.text.primary },
 
-  sectionLabel: { fontSize: 13, fontWeight: '600', color: '#666', marginBottom: 6 },
-  sectionSubtext: { fontSize: 13, color: '#888', marginBottom: 12 },
+  sectionSubtext: { fontSize: typeScale.sm, color: colors.text.tertiary, marginBottom: 12 },
 
   topicRow: {
     flexDirection: 'row',
     borderWidth: 1,
-    borderColor: '#e5e5e5',
+    borderColor: colors.border,
+    borderRadius: radius.lg,
     marginBottom: 8,
     alignItems: 'flex-start',
+    backgroundColor: colors.surface,
+    overflow: 'hidden',
   },
   topicCheckArea: {
     flex: 1,
@@ -365,24 +365,25 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   topicBody: { flex: 1 },
-  topicLabel: { fontSize: 14, fontWeight: '600', color: '#111', marginBottom: 3 },
-  topicLabelUnchecked: { color: '#999', fontWeight: '400' },
-  topicReason: { fontSize: 12, color: '#888', lineHeight: 17 },
+  topicLabel: { fontSize: typeScale.sm + 1, fontWeight: '600', color: colors.text.primary, marginBottom: 3 },
+  topicLabelUnchecked: { color: colors.text.tertiary, fontWeight: '400' },
+  topicReason: { fontSize: typeScale.xs + 1, color: colors.text.tertiary, lineHeight: 17 },
   removeTopicButton: { paddingHorizontal: 14, paddingVertical: 14, justifyContent: 'center' },
-  removeTopicText: { fontSize: 20, color: '#bbb' },
+  removeTopicText: { fontSize: 20, color: colors.disabled },
 
   check: {
     width: 20,
     height: 20,
     borderWidth: 1.5,
-    borderColor: '#888',
+    borderColor: colors.text.tertiary,
+    borderRadius: radius.sm,
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
     marginTop: 1,
   },
-  checkDone: { borderColor: '#111', backgroundColor: '#111' },
-  checkMark: { fontSize: 11, color: '#fff', fontWeight: '700' },
+  checkDone: { borderColor: colors.success, backgroundColor: colors.success },
+  checkMark: { fontSize: 11, color: colors.text.inverse, fontWeight: '700' },
 
   inputRow: {
     flexDirection: 'row',
@@ -393,55 +394,54 @@ const styles = StyleSheet.create({
   addInput: {
     flex: 1,
     borderWidth: 1,
-    borderColor: '#e5e5e5',
+    borderColor: colors.border,
+    borderRadius: radius.md,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    fontSize: 14,
-    color: '#111',
+    fontSize: typeScale.sm + 1,
+    color: colors.text.primary,
+    backgroundColor: colors.surface,
   },
   addButton: {
-    borderWidth: 1,
-    borderColor: '#111',
+    borderWidth: 1.5,
+    borderColor: colors.navy,
+    borderRadius: radius.md,
     paddingHorizontal: 16,
     paddingVertical: 10,
     justifyContent: 'center',
   },
-  addButtonDisabled: { borderColor: '#ddd' },
-  addButtonText: { fontSize: 13, fontWeight: '600', color: '#111' },
+  addButtonDisabled: { borderColor: colors.disabled },
+  addButtonText: { fontSize: typeScale.sm, fontWeight: '600', color: colors.navy },
+  addButtonTextDisabled: { color: colors.disabled },
 
-  buildButton: {
-    backgroundColor: '#111',
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  buildButtonDisabled: { backgroundColor: '#ccc' },
-  buildButtonText: { color: '#fff', fontSize: 15, fontWeight: '600' },
-  noneSelectedHint: { fontSize: 12, color: '#aaa', textAlign: 'center', marginTop: 8 },
-
-  divider: { height: 1, backgroundColor: '#e5e5e5', marginVertical: 24 },
+  buildGap: {},
+  noneSelectedHint: { fontSize: typeScale.xs + 1, color: colors.text.tertiary, textAlign: 'center', marginTop: 8 },
 
   prepItemRow: {
     borderWidth: 1,
-    borderColor: '#e5e5e5',
+    borderColor: colors.border,
+    borderRadius: radius.lg,
     padding: 14,
     marginBottom: 8,
+    backgroundColor: colors.surface,
   },
-  prepItemDone: { borderColor: '#ccc' },
+  prepItemDone: { borderColor: colors.disabled },
   prepCheckArea: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 12,
     marginBottom: 10,
   },
-  prepItemLabel: { flex: 1, fontSize: 14, fontWeight: '600', color: '#111', marginTop: 1 },
-  prepItemLabelDone: { color: '#999', textDecorationLine: 'line-through', fontWeight: '400' },
+  prepItemLabel: { flex: 1, fontSize: typeScale.sm + 1, fontWeight: '600', color: colors.text.primary, marginTop: 1 },
+  prepItemLabelDone: { color: colors.text.tertiary, textDecorationLine: 'line-through', fontWeight: '400' },
   notesInput: {
     borderWidth: 1,
-    borderColor: '#e5e5e5',
+    borderColor: colors.border,
+    borderRadius: radius.sm,
     paddingHorizontal: 10,
     paddingVertical: 8,
-    fontSize: 13,
-    color: '#333',
+    fontSize: typeScale.sm,
+    color: colors.text.primary,
     marginLeft: 32,
   },
 
@@ -450,31 +450,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     borderWidth: 1,
-    borderColor: '#e5e5e5',
+    borderColor: colors.border,
+    borderRadius: radius.lg,
     padding: 14,
     gap: 12,
+    backgroundColor: colors.surface,
   },
-  followUpLabel: { flex: 1, fontSize: 14, color: '#222', lineHeight: 20 },
-  followUpLabelDone: { color: '#999', textDecorationLine: 'line-through' },
+  followUpLabel: { flex: 1, fontSize: typeScale.sm + 1, color: colors.text.primary, lineHeight: 20 },
+  followUpLabelDone: { color: colors.text.tertiary, textDecorationLine: 'line-through' },
 
-  officeCard: { borderWidth: 1, borderColor: '#e5e5e5', padding: 16, marginBottom: 8 },
-  officeName: { fontSize: 15, fontWeight: '600', color: '#111', marginBottom: 4 },
-  officeHours: { fontSize: 13, color: '#666', marginBottom: 16 },
-  callButton: {
-    backgroundColor: '#111',
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  callButtonText: { color: '#fff', fontSize: 15, fontWeight: '600' },
-  emailButton: {
-    borderWidth: 1,
-    borderColor: '#111',
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  emailButtonText: { color: '#111', fontSize: 15, fontWeight: '600' },
-
-  viewOfficeLink: { paddingTop: 12, alignItems: 'center' },
-  viewOfficeLinkText: { fontSize: 13, color: '#555', fontWeight: '500' },
+  officeCardGap: { marginBottom: 8 },
+  officeCardInner: { padding: 16 },
+  officeName: { fontSize: typeScale.base, fontWeight: '600', color: colors.text.primary, marginBottom: 4 },
+  officeHours: { fontSize: typeScale.sm, color: colors.text.secondary, marginBottom: 16 },
+  callGap: { marginBottom: 8 },
+  emailGap: { marginBottom: 4 },
 });
