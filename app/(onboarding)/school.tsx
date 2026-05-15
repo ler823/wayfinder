@@ -11,6 +11,11 @@ const SCHOOLS = [
   'Cal State Fullerton',
   'Cal Poly Pomona',
   'Cal State Northridge',
+  'Cal State San Bernardino',
+  'Cal State Dominguez Hills',
+  'Cal State Channel Islands',
+  'Cal Poly San Luis Obispo',
+  'Cal State San Marcos',
   'Other',
 ];
 
